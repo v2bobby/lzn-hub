@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing - LenzerHub</title>
+  <meta name="description" content="Straightforward pricing for LenzerHub. No auto-renewal traps. Starter, Growth, Scale, and Enterprise plans.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<nav class="navbar scrolled">
+  <div class="navbar-inner">
+    <a href="../index.html" class="logo">
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#0a1045"/><path d="M8 10h16M8 14h12M8 18h14M8 22h10" stroke="#d4a373" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="3" fill="#d4a373"/></svg>
+      <span class="logo-text">Lenzer<span>Hub</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="product.html">Product</a><a href="solutions.html">Solutions</a><a href="pricing.html">Pricing</a><a href="about.html">About</a>
+    </div>
+    <a href="contact.html" class="btn-nav">Start Free Trial</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="product.html">Product</a><a href="solutions.html">Solutions</a><a href="pricing.html">Pricing</a><a href="about.html">About</a>
+  <a href="contact.html" style="margin-top:16px;background:var(--navy);color:#fff;padding:14px 32px;border-radius:100px;">Start Free Trial</a>
+</div>
+
+<main style="padding-top:72px;">
+  <section class="section dark-section" style="padding:clamp(60px,8vw,100px) 0;">
+    <div class="container reveal" style="text-align:center;">
+      <p class="mono">Pricing</p>
+      <h1 style="font-size:clamp(2.5rem,5vw,4rem);margin-top:16px;">Straightforward Pricing.</h1>
+      <p style="color:rgba(255,255,255,0.75);margin-top:16px;font-style:italic;">No auto-renewal traps. No hidden fees.</p>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--bg);">
+    <div class="container reveal">
+      <div class="pricing-toggle">
+        <div class="toggle-track">
+          <button class="toggle-btn" id="monthlyBtn" onclick="setPricing(false)">Monthly</button>
+          <button class="toggle-btn active" id="annualBtn" onclick="setPricing(true)">Annual <span style="font-size:0.75rem;opacity:0.7;">-20%</span></button>
+        </div>
+      </div>
+
+      <div class="grid-2" style="max-width:1280px;margin:0 auto;">
+        <div class="pricing-card">
+          <h3 style="font-family:'Inter',sans-serif;font-size:1.25rem;font-weight:600;">Starter</h3>
+          <div style="margin-top:12px;"><span class="pricing-price" id="p1">$99</span><span style="color:var(--text-muted);">/mo</span></div>
+          <p style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;" id="b1">Billed annually $990</p>
+          <p style="font-size:0.9375rem;color:var(--text-secondary);margin-top:8px;">5 contract reviews/mo</p>
+          <div style="border-top:1px solid var(--border);margin:24px 0;"></div>
+          <ul class="feature-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Basic risk scanner</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Standard clause library</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Email support</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>1 user</li>
+          </ul>
+          <a href="contact.html" class="btn-outline">Start Free Trial</a>
+        </div>
+
+        <div class="pricing-card popular">
+          <span class="popular-badge">Most Popular</span>
+          <h3 style="font-family:'Inter',sans-serif;font-size:1.25rem;font-weight:600;">Growth</h3>
+          <div style="margin-top:12px;"><span class="pricing-price" id="p2">$299</span><span style="color:var(--text-muted);">/mo</span></div>
+          <p style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;" id="b2">Billed annually $2,990</p>
+          <p style="font-size:0.9375rem;color:var(--text-secondary);margin-top:8px;">25 contract reviews/mo</p>
+          <div style="border-top:1px solid var(--border);margin:24px 0;"></div>
+          <ul class="feature-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Benchmark data</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Counter-language generator</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Slack integration</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Renewal alerts</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>5 users</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Priority support</li>
+          </ul>
+          <a href="contact.html" class="btn-filled">Start Free Trial</a>
+        </div>
+
+        <div class="pricing-card">
+          <h3 style="font-family:'Inter',sans-serif;font-size:1.25rem;font-weight:600;">Scale</h3>
+          <div style="margin-top:12px;"><span class="pricing-price" id="p3">$799</span><span style="color:var(--text-muted);">/mo</span></div>
+          <p style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;" id="b3">Billed annually $7,990</p>
+          <p style="font-size:0.9375rem;color:var(--text-secondary);margin-top:8px;">Unlimited reviews</p>
+          <div style="border-top:1px solid var(--border);margin:24px 0;"></div>
+          <ul class="feature-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>API access</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Custom playbooks</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>SSO &amp; SAML</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Dedicated account manager</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Unlimited users</li>
+          </ul>
+          <a href="contact.html" class="btn-outline">Contact Sales</a>
+        </div>
+
+        <div class="pricing-card" style="display:flex;flex-direction:column;justify-content:center;">
+          <h3 style="font-family:'Inter',sans-serif;font-size:1.25rem;font-weight:600;">Enterprise</h3>
+          <div style="margin-top:12px;"><span class="pricing-price" style="font-size:2rem;">Custom</span></div>
+          <p style="font-size:0.9375rem;color:var(--text-secondary);margin-top:8px;">For large teams with custom needs</p>
+          <div style="border-top:1px solid var(--border);margin:24px 0;"></div>
+          <ul class="feature-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Everything in Scale</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>On-premise deployment</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Custom AI training</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>SLA guarantees</li>
+          </ul>
+          <a href="contact.html" class="btn-outline">Contact Sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--white);">
+    <div class="container reveal">
+      <div class="section-header"><h2 style="font-size:clamp(1.75rem,2.5vw,2.25rem);">Feature Comparison</h2></div>
+      <div style="overflow-x:auto;">
+        <table class="comparison-table">
+          <thead><tr><th>Feature</th><th>Starter</th><th>Growth</th><th>Scale</th></tr></thead>
+          <tbody>
+            <tr><td>Contract reviews</td><td>5/mo</td><td>25/mo</td><td>Unlimited</td></tr>
+            <tr><td>Basic risk scanner</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+            <tr><td>Standard clause library</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+            <tr><td>Email support</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+            <tr><td>Users</td><td>1</td><td>5</td><td>Unlimited</td></tr>
+            <tr><td>Benchmark data</td><td>&mdash;</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+            <tr><td>Counter-language</td><td>&mdash;</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+            <tr><td>Slack integration</td><td>&mdash;</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+            <tr><td>Renewal alerts</td><td>&mdash;</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+            <tr><td>Priority support</td><td>&mdash;</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+            <tr><td>API access</td><td>&mdash;</td><td>&mdash;</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+            <tr><td>SSO &amp; SAML</td><td>&mdash;</td><td>&mdash;</td><td><svg width="16" height="16" style="color:var(--green);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section dark-section" style="text-align:center;">
+    <div class="container reveal">
+      <h2 style="font-size:clamp(1.75rem,2.5vw,2.25rem);">Still Have Questions?</h2>
+      <p style="color:rgba(255,255,255,0.7);margin:16px 0 32px;">Talk to our sales team for a personalized quote or custom requirements.</p>
+      <a href="contact.html" class="btn-primary" style="display:inline-block;">Talk to Sales</a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="../index.html" class="logo">
+          <svg class="logo-icon" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#d4a373"/><path d="M8 10h16M8 14h12M8 18h14M8 22h10" stroke="#0a1045" stroke-width="2" stroke-linecap="round"/><circle cx="24" cy="23" r="3" fill="#0a1045"/></svg>
+          <span class="logo-text" style="color:#fff;">Lenzer<span style="color:#fff;">Hub</span></span>
+        </a>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.9375rem;margin-top:12px;">Never sign a bad contract again.</p>
+      </div>
+      <div><h4>Product</h4><a href="product.html">Features</a><a href="pricing.html">Pricing</a><a href="product.html">Security</a><a href="product.html">Integrations</a></div>
+      <div><h4>Company</h4><a href="about.html">About</a><a href="blog.html">Blog</a><a href="about.html">Careers</a><a href="contact.html">Contact</a></div>
+      <div><h4>Legal</h4><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cookie Policy</a></div>
+    </div>
+    <div class="footer-bottom">
+      <p style="color:rgba(255,255,255,0.3);font-size:0.8125rem;">&copy; 2026 LenzerHub. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+        <a href="#" aria-label="Twitter/X"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="chat-bubble" id="chatBubble">
+  <svg class="chat-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  <svg class="chat-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</div>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header"><div class="chat-avatar">L</div><div><p>LenzerHub Support</p><span>Typically replies in minutes</span></div></div>
+  <div class="chat-messages" id="chatMessages"><div class="chat-msg bot">Hi! How can we help?</div></div>
+  <div class="chat-input-row"><input type="text" id="chatInput" placeholder="Type a message..."><button class="chat-send" id="chatSend"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9 22,2"/></svg></button></div>
+</div>
+
+<script>
+function setPricing(annual) {
+  document.getElementById('monthlyBtn').classList.toggle('active', !annual);
+  document.getElementById('annualBtn').classList.toggle('active', annual);
+  document.getElementById('p1').textContent = annual ? '$99' : '$119';
+  document.getElementById('p2').textContent = annual ? '$299' : '$359';
+  document.getElementById('p3').textContent = annual ? '$799' : '$959';
+  document.getElementById('b1').textContent = annual ? 'Billed annually $990' : 'Billed monthly';
+  document.getElementById('b2').textContent = annual ? 'Billed annually $2,990' : 'Billed monthly';
+  document.getElementById('b3').textContent = annual ? 'Billed annually $7,990' : 'Billed monthly';
+}
+</script>
+<script src="../js/main.js"></script>
+</body>
+</html>

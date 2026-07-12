@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LenzerHub - AI-Powered Contract Negotiation for SMBs</title>
+  <meta name="description" content="LenzerHub scans your vendor contracts, flags hidden risks, and generates counter-offers in minutes. Never sign a bad contract again.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar scrolled">
+  <div class="navbar-inner">
+    <a href="index.html" class="logo">
+      <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+        <rect width="32" height="32" rx="8" fill="#0a1045"/>
+        <path d="M8 10h16M8 14h12M8 18h14M8 22h10" stroke="#d4a373" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="24" cy="23" r="3" fill="#d4a373"/>
+      </svg>
+      <span class="logo-text">Lenzer<span>Hub</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="pages/product.html">Product</a>
+      <a href="pages/solutions.html">Solutions</a>
+      <a href="pages/pricing.html">Pricing</a>
+      <a href="pages/about.html">About</a>
+    </div>
+    <a href="pages/contact.html" class="btn-nav">Start Free Trial</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="pages/product.html">Product</a>
+  <a href="pages/solutions.html">Solutions</a>
+  <a href="pages/pricing.html">Pricing</a>
+  <a href="pages/about.html">About</a>
+  <a href="pages/contact.html" style="margin-top:16px;background:var(--navy);color:#fff;padding:14px 32px;border-radius:100px;">Start Free Trial</a>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-overlay"></div>
+  <div class="hero-content container">
+    <p class="hero-label">AI-Powered Contract Intelligence</p>
+    <h1><span>AI That Reads</span> <span>the Fine Print</span></h1>
+    <p>LenzerHub scans your vendor contracts, flags hidden risks, and generates counter-offers in minutes — not days. Built for SMBs who can't afford a full legal team.</p>
+    <div class="hero-buttons">
+      <a href="pages/contact.html" class="btn-primary">Upload Your First Contract</a>
+      <a href="#demo" class="btn-ghost">Watch How It Works</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRUSTED BY ===== -->
+<section class="trusted-by reveal">
+  <div class="container" style="max-width:900px;">
+    <p class="trusted-label">Trusted by 500+ growing companies</p>
+    <div class="logo-row">
+      <span>TechFlow</span><span>Meridian</span><span>Atlas Co</span><span>Nexus Labs</span><span>BrightPath</span><span>Vertex Systems</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROBLEM ===== -->
+<section class="section" style="background:var(--bg);">
+  <div class="container reveal">
+    <div class="problem-grid">
+      <div style="padding-right:0;">
+        <p class="mono" style="margin-bottom:12px;">The Problem</p>
+        <h2 style="font-size:clamp(2rem,3vw,2.75rem);">Why Contracts Break Deals</h2>
+      </div>
+      <div>
+        <span class="stat-num">90%</span>
+        <h3 style="margin-top:8px;">The Blind Spot</h3>
+        <p style="color:var(--text-secondary);margin-top:8px;">of SMBs sign contracts without legal review</p>
+      </div>
+      <div>
+        <span class="stat-num">$400</span>
+        <h3 style="margin-top:8px;">The Cost Trap</h3>
+        <p style="color:var(--text-secondary);margin-top:8px;">Average legal review costs $400/hour; you have 20 contracts pending</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DEMO ===== -->
+<section id="demo" class="section" style="background:var(--white);">
+  <div class="container reveal">
+    <div class="demo-grid">
+      <div>
+        <p class="mono" style="margin-bottom:12px;">How It Works</p>
+        <h2 style="font-size:clamp(2rem,3vw,2.75rem);margin-bottom:48px;">From Upload to Negotiation-Ready in 3 Minutes</h2>
+        <div class="step">
+          <div class="step-circle">01</div>
+          <div>
+            <h3 style="font-family:'Inter',sans-serif;font-size:1.125rem;">Upload</h3>
+            <p style="color:var(--text-secondary);font-size:0.9375rem;margin-top:4px;">Drag &amp; drop PDF, Word, or scanned contracts. Multi-page handling with OCR.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-circle">02</div>
+          <div>
+            <h3 style="font-family:'Inter',sans-serif;font-size:1.125rem;">Analyze</h3>
+            <p style="color:var(--text-secondary);font-size:0.9375rem;margin-top:4px;">AI scans 50+ clause types, assigns severity scores, translates to plain English.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-circle">03</div>
+          <div>
+            <h3 style="font-family:'Inter',sans-serif;font-size:1.125rem;">Respond</h3>
+            <p style="color:var(--text-secondary);font-size:0.9375rem;margin-top:4px;">Download a redlined counter-proposal with replacement language and explanations.</p>
+          </div>
+        </div>
+      </div>
+      <div class="demo-image">
+        <img src="images/dashboard.jpg" alt="LenzerHub Dashboard showing contract analysis with risk highlights">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="section" style="background:var(--bg);">
+  <div class="container reveal">
+    <div class="section-header">
+      <p class="mono">Features</p>
+      <h2>Everything You Need to Negotiate Like a Pro</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="gold-line"></div>
+        <h3>Risk Scanner</h3>
+        <p style="color:var(--text-secondary);font-size:0.9375rem;margin-top:8px;">AI detects 50+ risky clause types across all major contract categories</p>
+      </div>
+      <div class="card">
+        <div class="gold-line"></div>
+        <h3>Plain English Explanations</h3>
+        <p style="color:var(--text-secondary);font-size:0.9375rem;margin-top:8px;">No legalese. Know exactly what you're agreeing to</p>
+      </div>
+      <div class="card">
+        <div class="gold-line"></div>
+        <h3>Counter-Language Generator</h3>
+        <p style="color:var(--text-secondary);font-size:0.9375rem;margin-top:8px;">Industry-standard replacement clauses tailored to your situation</p>
+      </div>
+      <div class="card">
+        <div class="gold-line"></div>
+        <h3>Benchmark Data</h3>
+        <p style="color:var(--text-secondary);font-size:0.9375rem;margin-top:8px;">"Similar companies negotiated this clause down by 40%"</p>
+      </div>
+      <div class="card">
+        <div class="gold-line"></div>
+        <h3>Renewal Alerts</h3>
+        <p style="color:var(--text-secondary);font-size:0.9375rem;margin-top:8px;">Never miss an auto-renewal deadline again</p>
+      </div>
+      <div class="card">
+        <div class="gold-line"></div>
+        <h3>Secure &amp; Confidential</h3>
+        <p style="color:var(--text-secondary);font-size:0.9375rem;margin-top:8px;">Bank-grade encryption. Your contracts are never used to train models</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== IMPACT ===== -->
+<section class="section dark-section">
+  <div class="container reveal">
+    <div class="section-header">
+      <p class="mono">Impact</p>
+      <h2>Trusted by Growing Teams</h2>
+      <p style="color:rgba(255,255,255,0.6);max-width:540px;margin:12px auto 0;">Real results from real SMBs who stopped guessing and started negotiating.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card card-dark" style="text-align:center;">
+        <span style="font-family:'Playfair Display',serif;font-size:clamp(3rem,5vw,4.5rem);font-weight:700;color:var(--gold);line-height:1;">500+</span>
+        <h3 style="margin-top:12px;color:#fff;">Companies Protected</h3>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.9375rem;margin-top:8px;">From costly auto-renewals, liability traps, and unfair terms</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;">
+        <span style="font-family:'Playfair Display',serif;font-size:clamp(3rem,5vw,4.5rem);font-weight:700;color:var(--gold);line-height:1;">$12M+</span>
+        <h3 style="margin-top:12px;color:#fff;">Risk Identified</h3>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.9375rem;margin-top:8px;">In hidden fees, uncapped liability, and unfavorable clauses</p>
+      </div>
+      <div class="card card-dark" style="text-align:center;">
+        <span style="font-family:'Playfair Display',serif;font-size:clamp(3rem,5vw,4.5rem);font-weight:700;color:var(--gold);line-height:1;">94%</span>
+        <h3 style="margin-top:12px;color:#fff;">Detection Accuracy</h3>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.9375rem;margin-top:8px;">AI-trained on 100K+ negotiated contracts across all major categories</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="section" style="background:var(--bg);">
+  <div class="container reveal" style="max-width:1080px;">
+    <div class="section-header">
+      <p class="mono">Pricing</p>
+      <h2>Simple Pricing. No Hidden Fees.</h2>
+      <p style="color:var(--text-secondary);margin-top:8px;font-style:italic;">(Unlike Your Last Contract.)</p>
+    </div>
+
+    <div class="pricing-toggle">
+      <div class="toggle-track">
+        <button class="toggle-btn" id="monthlyBtn" onclick="setPricing(false)">Monthly</button>
+        <button class="toggle-btn active" id="annualBtn" onclick="setPricing(true)">Annual <span style="font-size:0.75rem;opacity:0.7;">-20%</span></button>
+      </div>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3 style="font-family:'Inter',sans-serif;font-size:1.25rem;font-weight:600;">Starter</h3>
+        <div style="margin-top:12px;">
+          <span class="pricing-price" id="starterPrice">$99</span>
+          <span style="color:var(--text-muted);">/mo</span>
+        </div>
+        <p style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;" id="starterBilled">Billed annually $990</p>
+        <p style="font-size:0.9375rem;color:var(--text-secondary);margin-top:8px;">5 contract reviews/mo</p>
+        <div style="border-top:1px solid var(--border);margin:24px 0;"></div>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Basic risk scanner</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Standard clause library</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Email support</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>1 user</li>
+        </ul>
+        <a href="pages/contact.html" class="btn-outline">Start Free 14-Day Trial</a>
+      </div>
+
+      <div class="pricing-card popular">
+        <span class="popular-badge">Most Popular</span>
+        <h3 style="font-family:'Inter',sans-serif;font-size:1.25rem;font-weight:600;">Growth</h3>
+        <div style="margin-top:12px;">
+          <span class="pricing-price" id="growthPrice">$299</span>
+          <span style="color:var(--text-muted);">/mo</span>
+        </div>
+        <p style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;" id="growthBilled">Billed annually $2,990</p>
+        <p style="font-size:0.9375rem;color:var(--text-secondary);margin-top:8px;">25 contract reviews/mo</p>
+        <div style="border-top:1px solid var(--border);margin:24px 0;"></div>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Benchmark data</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Counter-language generator</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Slack integration</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Renewal alerts</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>5 users</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Priority support</li>
+        </ul>
+        <a href="pages/contact.html" class="btn-filled">Start Free 14-Day Trial</a>
+      </div>
+
+      <div class="pricing-card">
+        <h3 style="font-family:'Inter',sans-serif;font-size:1.25rem;font-weight:600;">Scale</h3>
+        <div style="margin-top:12px;">
+          <span class="pricing-price" id="scalePrice">$799</span>
+          <span style="color:var(--text-muted);">/mo</span>
+        </div>
+        <p style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px;" id="scaleBilled">Billed annually $7,990</p>
+        <p style="font-size:0.9375rem;color:var(--text-secondary);margin-top:8px;">Unlimited reviews</p>
+        <div style="border-top:1px solid var(--border);margin:24px 0;"></div>
+        <ul class="feature-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>API access</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Custom clause playbooks</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>SSO &amp; SAML</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Dedicated account manager</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Unlimited users</li>
+        </ul>
+        <a href="pages/contact.html" class="btn-outline">Contact Sales</a>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:0.8125rem;color:var(--text-muted);margin-top:32px;">No credit card required. Cancel anytime.</p>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="section" style="background:var(--white);">
+  <div class="container narrow reveal">
+    <div class="section-header">
+      <h2>Frequently Asked Questions</h2>
+    </div>
+    <div>
+      <div class="faq-item">
+        <button class="faq-question">Is LenzerHub a law firm?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <div class="faq-answer"><p>No — we provide AI-powered contract analysis, not legal advice. Our tool helps you identify risks and generate counter-proposals, but we always recommend having a qualified attorney review critical contracts.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">What types of contracts do you support?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <div class="faq-answer"><p>We support SaaS MSAs, vendor agreements, SOWs, freelancer contracts, office leases, and more. Our AI is trained on 100,000+ contracts across all major categories.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">How accurate is the AI?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <div class="faq-answer"><p>Our AI is trained on 100K+ negotiated contracts and achieves 94% accuracy on risk detection. We continuously improve our models with feedback from legal professionals.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">Is my contract data secure?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <div class="faq-answer"><p>Absolutely. We are SOC 2 Type II certified with encryption at rest and in transit. Your contracts are never used to train our models — zero data retention for AI training.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">Can I integrate with my existing tools?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <div class="faq-answer"><p>Yes! We offer integrations with Slack, Salesforce, Google Drive, Dropbox, HubSpot, and Zapier. Available on Growth and Scale plans.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">What happens after my free trial?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <div class="faq-answer"><p>Choose a plan that works for you, or export your data and walk away. No lock-in, no hidden fees, no auto-renewal traps.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FINAL CTA ===== -->
+<section class="section dark-section">
+  <div class="container narrow reveal" style="text-align:center;">
+    <h2 style="font-size:clamp(2rem,3.5vw,3rem);">Stop Guessing. Start Negotiating.</h2>
+    <p style="color:rgba(255,255,255,0.7);margin-top:16px;">Your first contract review is free. Upload now and see what you've been missing.</p>
+    <form class="cta-form" onsubmit="event.preventDefault();this.innerHTML='<p style=\\'color:var(--gold)\\'>Thanks! Check your inbox for next steps.</p>';">
+      <input type="email" placeholder="Enter your work email" required>
+      <button type="submit">Get Started</button>
+    </form>
+    <p style="font-size:0.8125rem;color:rgba(255,255,255,0.4);margin-top:16px;">No credit card required. Cancel anytime.</p>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo">
+          <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="#d4a373"/>
+            <path d="M8 10h16M8 14h12M8 18h14M8 22h10" stroke="#0a1045" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="24" cy="23" r="3" fill="#0a1045"/>
+          </svg>
+          <span class="logo-text" style="color:#fff;">Lenzer<span style="color:#fff;font-weight:500;">Hub</span></span>
+        </a>
+        <p style="color:rgba(255,255,255,0.5);font-size:0.9375rem;margin-top:12px;">Never sign a bad contract again.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <a href="pages/product.html">Features</a>
+        <a href="pages/pricing.html">Pricing</a>
+        <a href="pages/product.html">Security</a>
+        <a href="pages/product.html">Integrations</a>
+        <a href="pages/product.html">API Docs</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="pages/about.html">About</a>
+        <a href="pages/blog.html">Blog</a>
+        <a href="pages/about.html">Careers</a>
+        <a href="pages/contact.html">Contact</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 LenzerHub. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+        <a href="#" aria-label="Twitter/X"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== CHAT WIDGET ===== -->
+<div class="chat-bubble" id="chatBubble">
+  <svg class="chat-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  <svg class="chat-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+</div>
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-avatar">L</div>
+    <div>
+      <p>LenzerHub Support</p>
+      <span>Typically replies in minutes</span>
+    </div>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg bot">Hi! How can we help?</div>
+  </div>
+  <div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Type a message...">
+    <button class="chat-send" id="chatSend">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+function setPricing(annual) {
+  document.getElementById('monthlyBtn').classList.toggle('active', !annual);
+  document.getElementById('annualBtn').classList.toggle('active', annual);
+  document.getElementById('starterPrice').textContent = annual ? '$99' : '$119';
+  document.getElementById('growthPrice').textContent = annual ? '$299' : '$359';
+  document.getElementById('scalePrice').textContent = annual ? '$799' : '$959';
+  document.getElementById('starterBilled').textContent = annual ? 'Billed annually $990' : 'Billed monthly';
+  document.getElementById('growthBilled').textContent = annual ? 'Billed annually $2,990' : 'Billed monthly';
+  document.getElementById('scaleBilled').textContent = annual ? 'Billed annually $7,990' : 'Billed monthly';
+}
+</script>
+<script src="js/main.js"></script>
+</body>
+</html>
