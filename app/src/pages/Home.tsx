@@ -1,438 +1,261 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
-import HeroCanvas from '../components/HeroCanvas'
+import { Link } from 'react-router'
+import { useAuth } from '@/hooks/useAuth'
 
-/* ─────────── ScrollReveal helper ─────────── */
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null)
+function Navbar() {
+  const { isAuthenticated, logout } = useAuth()
+  const [scrolled, setScrolled] = useState(false)
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add('revealed')
-          observer.unobserve(el)
-        }
-      },
-      { threshold: 0.15 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
+    const onScroll = () => setScrolled(window.scrollY > 40)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
-  return ref
-}
 
-/* ─────────── Hero Section ─────────── */
-function Hero() {
   return (
-    <section className="relative min-h-[100dvh] flex items-end" style={{ minHeight: '700px' }}>
-      <HeroCanvas />
-      <div
-        className="absolute inset-0 pointer-events-none z-[1]"
-        style={{
-          background: 'linear-gradient(to top, rgba(10,16,69,0.65) 0%, rgba(10,16,69,0.2) 50%, transparent 100%)',
-        }}
-      />
-      <div className="relative z-10 w-full max-w-[1280px] mx-auto pb-16 md:pb-24" style={{ padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <p className="font-['JetBrains_Mono'] text-[0.75rem] uppercase tracking-[0.1em] text-[#d4a373] mb-4">
-          AI-Powered Contract Intelligence
-        </p>
-        <h1 className="font-['Playfair_Display'] font-bold text-white" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', lineHeight: 1.05, textShadow: '0 2px 30px rgba(0,0,0,0.3)' }}>
-          <span className="block">AI That Reads</span>
-          <span className="block">the Fine Print</span>
-        </h1>
-        <p className="font-['Inter'] text-[rgba(255,255,255,0.85)] mt-5 max-w-[540px]" style={{ fontSize: 'clamp(1rem, 1.5vw, 1.25rem)', lineHeight: 1.6 }}>
-          LenzerHub scans your vendor contracts, flags hidden risks, and generates counter-offers in minutes — not days. Built for SMBs who can't afford a full legal team.
-        </p>
-        <div className="flex flex-wrap items-center gap-4 mt-10 mb-4">
-          <Link
-            to="/contact"
-            className="inline-block bg-[#d4a373] text-[#0a1045] rounded-full px-8 py-[14px] font-['Inter'] text-[0.9375rem] font-semibold hover:bg-white transition-all duration-300 shadow-lg shadow-[rgba(212,163,115,0.25)]"
-          >
-            Upload Your First Contract
-          </Link>
-          <a
-            href="#demo"
-            className="inline-block bg-transparent border border-[rgba(255,255,255,0.35)] text-white rounded-full px-8 py-[14px] font-['Inter'] text-[0.9375rem] font-medium hover:border-white hover:bg-[rgba(255,255,255,0.08)] transition-all duration-300"
-          >
-            Watch How It Works
-          </a>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ─────────── Trusted By ─────────── */
-function TrustedBy() {
-  const ref = useScrollReveal()
-  const logos = ['TechFlow', 'Meridian', 'Atlas Co', 'Nexus Labs', 'BrightPath', 'Vertex Systems']
-  return (
-    <section className="bg-white border-b border-[rgba(10,16,69,0.08)] py-10" ref={ref}>
-      <div className="max-w-[900px] mx-auto text-center" style={{ padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <p className="font-['JetBrains_Mono'] text-[0.75rem] uppercase tracking-[0.08em] text-[#a0abb8] mb-6">
-          Trusted by 500+ growing companies
-        </p>
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
-          {logos.map((name) => (
-            <span key={name} className="font-['Inter'] text-[0.9375rem] font-semibold text-[#a0abb8] hover:text-[#0a1045] transition-colors duration-300 tracking-wide">
-              {name}
-            </span>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ─────────── Problem Section ─────────── */
-function Problem() {
-  const ref = useScrollReveal()
-  const cards = [
-    { num: '90%', title: 'The Blind Spot', body: 'of SMBs sign contracts without legal review' },
-    { num: '$400', title: 'The Cost Trap', body: 'Average legal review costs $400/hour; you have 20 contracts pending' },
-    { num: '60%', title: 'The Auto-Renewal Surprise', body: 'of bad SaaS deals auto-renew because nobody tracked the deadline' },
-  ]
-  return (
-    <section className="bg-[#f4f5f0] py-24 md:py-32" ref={ref}>
-      <div className="max-w-[1280px] mx-auto" style={{ padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-0">
-          <div className="lg:pr-12">
-            <p className="font-['JetBrains_Mono'] text-[0.75rem] uppercase tracking-[0.08em] text-[#d4a373] mb-3">The Problem</p>
-            <h2 className="font-['Playfair_Display'] font-semibold text-[#0a1045]" style={{ fontSize: 'clamp(2rem, 3vw, 2.75rem)', lineHeight: 1.1 }}>
-              Why Contracts Break Deals
-            </h2>
-          </div>
-          {cards.map((card, i) => (
-            <div key={i} className={`lg:px-8 ${i > 0 ? 'lg:border-l border-[rgba(10,16,69,0.1)]' : ''}`}>
-              <span className="font-['Playfair_Display'] font-bold text-[#d4a373] opacity-40 block" style={{ fontSize: 'clamp(3rem, 5vw, 5rem)', lineHeight: 1 }}>
-                {card.num}
-              </span>
-              <h3 className="font-['Inter'] font-semibold text-[1.25rem] text-[#0a1045] mt-2">{card.title}</h3>
-              <p className="font-['Inter'] text-[1rem] text-[#6b7b8c] leading-relaxed mt-2">{card.body}</p>
+    <nav className={`fixed top-0 left-0 right-0 z-50 h-16 flex items-center transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'}`}>
+      <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-6">
+        <Link to="/" className="flex items-center gap-2">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#0a1045"/><path d="M8 10h16M8 14h12M8 18h14M8 22h10" stroke="#d4a373" strokeWidth="2" strokeLinecap="round"/><circle cx="24" cy="23" r="3" fill="#d4a373"/></svg>
+          <span className={`text-xl font-bold transition-colors duration-300 ${scrolled ? 'text-[#1a1a1a]' : 'text-white'}`}>Lenzer<span className="font-medium">Hub</span></span>
+        </Link>
+        <div className="hidden md:flex items-center gap-8">
+          <a href="#features" className={`text-sm font-medium transition-colors ${scrolled ? 'text-[#475569] hover:text-[#d4a373]' : 'text-white/80 hover:text-white'}`}>Features</a>
+          <a href="#product" className={`text-sm font-medium transition-colors ${scrolled ? 'text-[#475569] hover:text-[#d4a373]' : 'text-white/80 hover:text-white'}`}>Product</a>
+          <Link to="/about" className={`text-sm font-medium transition-colors ${scrolled ? 'text-[#475569] hover:text-[#d4a373]' : 'text-white/80 hover:text-white'}`}>About</Link>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-4">
+              <Link to="/dashboard" className={`text-sm font-medium transition-colors ${scrolled ? 'text-[#1a1a1a] hover:text-[#d4a373]' : 'text-white hover:text-[#d4a373]'}`}>Dashboard</Link>
+              <button onClick={logout} className={`text-sm transition-colors ${scrolled ? 'text-[#475569] hover:text-[#ef4444]' : 'text-white/80 hover:text-[#ef4444]'}`}>Sign Out</button>
             </div>
-          ))}
+          ) : (
+            <Link to="/login" className="bg-[#d4a373] text-[#1a1a1a] rounded-full px-5 py-2.5 text-sm font-medium hover:bg-white transition-all">Sign In</Link>
+          )}
         </div>
       </div>
-    </section>
+    </nav>
   )
 }
 
-/* ─────────── Demo Section ─────────── */
-function Demo() {
-  const ref = useScrollReveal()
-  const steps = [
-    { num: '01', title: 'Upload', desc: 'Drag & drop PDF, Word, or scanned contracts. Multi-page handling with OCR.' },
-    { num: '02', title: 'Analyze', desc: 'AI scans 50+ clause types, assigns severity scores, translates to plain English.' },
-    { num: '03', title: 'Respond', desc: 'Download a redlined counter-proposal with replacement language and explanations.' },
-  ]
+function Footer() {
   return (
-    <section id="demo" className="bg-white py-24 md:py-32" ref={ref}>
-      <div className="max-w-[1280px] mx-auto" style={{ padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <div className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-16 items-center">
+    <footer className="bg-[#0a1045] text-white py-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <p className="font-['JetBrains_Mono'] text-[0.75rem] uppercase tracking-[0.08em] text-[#d4a373] mb-3">How It Works</p>
-            <h2 className="font-['Playfair_Display'] font-semibold text-[#0a1045] mb-12" style={{ fontSize: 'clamp(2rem, 3vw, 2.75rem)', lineHeight: 1.1 }}>
-              From Upload to Negotiation-Ready in 3 Minutes
-            </h2>
-            <div className="space-y-10">
-              {steps.map((step) => (
-                <div key={step.num} className="flex gap-5">
-                  <div className="shrink-0 w-9 h-9 rounded-full border-[1.5px] border-[#0a1045] flex items-center justify-center font-['JetBrains_Mono'] text-[0.875rem] text-[#0a1045]">
-                    {step.num}
+            <div className="flex items-center gap-2 mb-3">
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#d4a373"/><path d="M8 10h16M8 14h12M8 18h14M8 22h10" stroke="#0a1045" strokeWidth="2" strokeLinecap="round"/><circle cx="24" cy="23" r="3" fill="#0a1045"/></svg>
+              <span className="text-lg font-bold">Lenzer<span className="font-medium">Hub</span></span>
+            </div>
+            <p className="text-sm text-white/50">Never sign a bad contract again. AI-powered contract negotiation for SMBs.</p>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold mb-3">Product</h4>
+            <div className="space-y-2"><Link to="/dashboard" className="block text-sm text-white/50 hover:text-white transition-colors">Dashboard</Link><a href="#features" className="block text-sm text-white/50 hover:text-white transition-colors">Features</a><a href="#product" className="block text-sm text-white/50 hover:text-white transition-colors">How It Works</a></div>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold mb-3">Company</h4>
+            <div className="space-y-2"><Link to="/about" className="block text-sm text-white/50 hover:text-white transition-colors">About</Link><a href="mailto:contactus@lenzerhub.com" className="block text-sm text-white/50 hover:text-white transition-colors">Contact</a></div>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold mb-3">Legal</h4>
+            <div className="space-y-2"><span className="block text-sm text-white/50">Privacy Policy</span><span className="block text-sm text-white/50">Terms of Service</span></div>
+          </div>
+        </div>
+        <div className="mt-8 pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-white/30">&copy; 2026 LenzerHub. All rights reserved.</p>
+          <div className="flex gap-4">
+            <a href="#" aria-label="LinkedIn" className="text-white/40 hover:text-white transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+import { useState, useEffect } from 'react'
+
+export default function Home() {
+  const { isAuthenticated } = useAuth()
+
+  return (
+    <div className="min-h-screen bg-[#f4f5f0]">
+      <Navbar />
+
+      {/* HERO */}
+      <section className="relative pt-24 pb-16 md:pt-28 md:pb-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1045] via-[#1b3a5c] to-[#0a1045]" />
+        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(212,163,115,0.3) 1px, transparent 0)', backgroundSize: '40px 40px'}} />
+        <div className="relative max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-[0.1em] text-[#d4a373] mb-4">AI-Powered Contract Intelligence</p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.05] mb-6">
+                Never Sign a<br />Bad Contract Again
+              </h1>
+              <p className="text-lg text-white/75 max-w-lg mb-8 leading-relaxed">
+                Upload any contract. Our AI scans 50+ clause types, flags hidden risks, and generates redlined counter-proposals in minutes.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                {isAuthenticated ? (
+                  <Link to="/dashboard" className="inline-block bg-[#d4a373] text-[#1a1a1a] rounded-full px-8 py-3.5 font-semibold hover:bg-white transition-all shadow-lg shadow-[#d4a373]/25">
+                    Go to Dashboard
+                  </Link>
+                ) : (
+                  <>
+                    <Link to="/login" className="inline-block bg-[#d4a373] text-[#1a1a1a] rounded-full px-8 py-3.5 font-semibold hover:bg-white transition-all shadow-lg shadow-[#d4a373]/25">
+                      Try It Free
+                    </Link>
+                    <a href="#product" className="inline-block border border-white/30 text-white rounded-full px-8 py-3.5 font-medium hover:bg-white/10 transition-all">
+                      See How It Works
+                    </a>
+                  </>
+                )}
+              </div>
+              <div className="flex items-center gap-6 mt-8">
+                <div className="flex -space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-[#d4a373] flex items-center justify-center text-[#1a1a1a] text-xs font-bold">A</div>
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold">B</div>
+                  <div className="w-8 h-8 rounded-full bg-[#d4a373]/80 flex items-center justify-center text-[#1a1a1a] text-xs font-bold">C</div>
+                </div>
+                <p className="text-sm text-white/60">Trusted by 500+ growing companies</p>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-3 h-3 rounded-full bg-[#ef4444]" />
+                  <div className="w-3 h-3 rounded-full bg-[#f59e0b]" />
+                  <div className="w-3 h-3 rounded-full bg-[#10b981]" />
+                  <span className="text-xs text-white/40 ml-2 font-mono">Contract Analysis</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-2.5 bg-white/5 rounded-lg border-l-2 border-[#ef4444]">
+                    <div><p className="text-sm text-white font-medium">Auto-Renewal Clause</p><p className="text-xs text-white/50">10-day notice window</p></div>
+                    <span className="px-2 py-1 bg-[#ef4444]/20 text-[#ef4444] text-xs rounded-full font-medium">Critical</span>
                   </div>
-                  <div>
-                    <h3 className="font-['Inter'] font-semibold text-[1.125rem] text-[#0a1045]">{step.title}</h3>
-                    <p className="font-['Inter'] text-[0.9375rem] text-[#6b7b8c] mt-1 leading-relaxed">{step.desc}</p>
+                  <div className="flex items-center justify-between p-2.5 bg-white/5 rounded-lg border-l-2 border-[#ef4444]">
+                    <div><p className="text-sm text-white font-medium">Liability Cap</p><p className="text-xs text-white/50">No minimum floor</p></div>
+                    <span className="px-2 py-1 bg-[#ef4444]/20 text-[#ef4444] text-xs rounded-full font-medium">Critical</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2.5 bg-white/5 rounded-lg border-l-2 border-[#f59e0b]">
+                    <div><p className="text-sm text-white font-medium">Indemnification</p><p className="text-xs text-white/50">One-sided in vendor's favor</p></div>
+                    <span className="px-2 py-1 bg-[#f59e0b]/20 text-[#f59e0b] text-xs rounded-full font-medium">High</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2.5 bg-white/5 rounded-lg border-l-2 border-[#10b981]">
+                    <div><p className="text-sm text-white font-medium">IP Assignment</p><p className="text-xs text-white/50">Standard terms</p></div>
+                    <span className="px-2 py-1 bg-[#10b981]/20 text-[#10b981] text-xs rounded-full font-medium">Low</span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-          <div className="rounded-lg overflow-hidden shadow-[0_20px_60px_rgba(10,16,69,0.12)]">
-            <img src="/images/dashboard.jpg" alt="LenzerHub Dashboard showing contract analysis with risk highlights" className="w-full h-auto" />
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ─────────── Features Section ─────────── */
-function Features() {
-  const ref = useScrollReveal()
-  const features = [
-    { title: 'Risk Scanner', desc: 'AI detects 50+ risky clause types across all major contract categories' },
-    { title: 'Plain English Explanations', desc: 'No legalese. Know exactly what you\'re agreeing to' },
-    { title: 'Counter-Language Generator', desc: 'Industry-standard replacement clauses tailored to your situation' },
-    { title: 'Benchmark Data', desc: '"Similar companies negotiated this clause down by 40%"' },
-    { title: 'Renewal Alerts', desc: 'Never miss an auto-renewal deadline again' },
-    { title: 'Secure & Confidential', desc: 'Bank-grade encryption. Your contracts are never used to train models' },
-  ]
-  return (
-    <section className="bg-[#f4f5f0] py-24 md:py-32" ref={ref}>
-      <div className="max-w-[1280px] mx-auto" style={{ padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <div className="text-center mb-16">
-          <p className="font-['JetBrains_Mono'] text-[0.75rem] uppercase tracking-[0.08em] text-[#d4a373] mb-3">Features</p>
-          <h2 className="font-['Playfair_Display'] font-semibold text-[#0a1045]" style={{ fontSize: 'clamp(2rem, 3vw, 2.75rem)', lineHeight: 1.1 }}>
-            Everything You Need to Negotiate Like a Pro
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((f) => (
-            <div key={f.title} className="group">
-              <div className="w-10 h-[2px] bg-[#d4a373]" />
-              <h3 className="font-['Inter'] font-semibold text-[1.125rem] text-[#0a1045] mt-4 group-hover:text-[#d4a373] transition-colors duration-300">{f.title}</h3>
-              <p className="font-['Inter'] text-[0.9375rem] text-[#6b7b8c] mt-2 leading-relaxed">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ─────────── Impact Section ─────────── */
-function Impact() {
-  const ref = useScrollReveal()
-  const stats = [
-    { num: '500+', label: 'Companies Protected', desc: 'From costly auto-renewals, liability traps, and unfair terms' },
-    { num: '$12M+', label: 'Risk Identified', desc: 'In hidden fees, uncapped liability, and unfavorable clauses' },
-    { num: '94%', label: 'Detection Accuracy', desc: 'AI-trained on 100K+ negotiated contracts across all major categories' },
-  ]
-  return (
-    <section className="bg-[#0a1045] py-24 md:py-32" ref={ref}>
-      <div className="max-w-[1280px] mx-auto" style={{ padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <div className="text-center mb-16">
-          <p className="font-['JetBrains_Mono'] text-[0.75rem] uppercase tracking-[0.08em] text-[#d4a373] mb-3">Impact</p>
-          <h2 className="font-['Playfair_Display'] font-semibold text-white" style={{ fontSize: 'clamp(2rem, 3vw, 2.75rem)', lineHeight: 1.1 }}>
-            Trusted by Growing Teams
-          </h2>
-          <p className="font-['Inter'] text-[rgba(255,255,255,0.6)] mt-3 max-w-[540px] mx-auto">
-            Real results from real SMBs who stopped guessing and started negotiating.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {stats.map((s) => (
-            <div key={s.label} className="bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-xl p-10 text-center">
-              <span className="font-['Playfair_Display'] font-bold text-[#d4a373] block" style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)', lineHeight: 1 }}>
-                {s.num}
-              </span>
-              <h3 className="font-['Inter'] font-semibold text-[1.125rem] text-white mt-3">{s.label}</h3>
-              <p className="font-['Inter'] text-[0.9375rem] text-[rgba(255,255,255,0.5)] leading-relaxed mt-2">{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ─────────── Pricing Section ─────────── */
-function Pricing() {
-  const ref = useScrollReveal()
-  const [annual, setAnnual] = useState(true)
-  const plans = [
-    { name: 'Starter', price: annual ? 99 : 119, annualPrice: 990, reviews: '5 contract reviews/mo', features: ['Basic risk scanner', 'Standard clause library', 'Email support', '1 user'] },
-    { name: 'Growth', price: annual ? 299 : 359, annualPrice: 2990, popular: true, reviews: '25 contract reviews/mo', features: ['Benchmark data', 'Counter-language generator', 'Slack integration', 'Renewal alerts', '5 users', 'Priority support'] },
-    { name: 'Scale', price: annual ? 799 : 959, annualPrice: 7990, reviews: 'Unlimited reviews', features: ['API access', 'Custom clause playbooks', 'SSO & SAML', 'Dedicated account manager', 'Unlimited users'] },
-  ]
-  return (
-    <section className="bg-[#f4f5f0] py-24 md:py-32" ref={ref}>
-      <div className="max-w-[1080px] mx-auto" style={{ padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <div className="text-center mb-12">
-          <p className="font-['JetBrains_Mono'] text-[0.75rem] uppercase tracking-[0.08em] text-[#d4a373] mb-3">Pricing</p>
-          <h2 className="font-['Playfair_Display'] font-semibold text-[#0a1045]" style={{ fontSize: 'clamp(2rem, 3vw, 2.75rem)', lineHeight: 1.1 }}>
-            Simple Pricing. No Hidden Fees.
-          </h2>
-          <p className="font-['Inter'] text-[1rem] text-[#6b7b8c] mt-2 italic">(Unlike Your Last Contract.)</p>
-        </div>
-
-        <div className="flex justify-center mb-12">
-          <div className="bg-white rounded-full p-1 flex">
-            <button onClick={() => setAnnual(false)} className={`px-6 py-2.5 rounded-full font-['Inter'] text-[0.875rem] font-medium transition-all duration-300 ${!annual ? 'bg-[#0a1045] text-white' : 'text-[#6b7b8c]'}`}>
-              Monthly
-            </button>
-            <button onClick={() => setAnnual(true)} className={`px-6 py-2.5 rounded-full font-['Inter'] text-[0.875rem] font-medium transition-all duration-300 ${annual ? 'bg-[#0a1045] text-white' : 'text-[#6b7b8c]'}`}>
-              Annual <span className="text-[0.75rem] opacity-70">-20%</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={`bg-white border border-[rgba(10,16,69,0.08)] rounded-2xl p-8 md:p-10 relative ${plan.popular ? 'md:-translate-y-2 border-[#d4a373]' : ''}`}
-            >
-              {plan.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#d4a373] text-[#0a1045] font-['JetBrains_Mono'] text-[0.6875rem] uppercase tracking-wider px-4 py-1 rounded-full font-medium">
-                  Most Popular
-                </span>
-              )}
-              <h3 className="font-['Inter'] font-semibold text-[1.25rem] text-[#0a1045]">{plan.name}</h3>
-              <div className="flex items-baseline gap-1 mt-3">
-                <span className="font-['Playfair_Display'] font-bold text-[#0a1045]" style={{ fontSize: 'clamp(2rem, 3vw, 3rem)' }}>
-                  ${plan.price}
-                </span>
-                <span className="font-['Inter'] text-[1rem] text-[#a0abb8]">/mo</span>
+                <div className="mt-3 p-2.5 bg-[#d4a373]/10 rounded-lg border border-[#d4a373]/20">
+                  <p className="text-xs text-[#d4a373] font-mono uppercase tracking-wider mb-1">Overall Risk Score</p>
+                  <p className="text-2xl font-bold text-white">72<span className="text-sm text-white/50">/100</span></p>
+                </div>
               </div>
-              <p className="font-['Inter'] text-[0.8125rem] text-[#a0abb8] mt-1">
-                {annual ? `Billed annually $${plan.annualPrice}` : 'Billed monthly'}
-              </p>
-              <p className="font-['Inter'] text-[0.9375rem] text-[#6b7b8c] mt-3">{plan.reviews}</p>
-              <div className="border-t border-[rgba(10,16,69,0.08)] my-6" />
-              <ul className="space-y-3">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3">
-                    <svg className="w-4 h-4 text-[#d4a373] mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    <span className="font-['Inter'] text-[0.9375rem] text-[#6b7b8c]">{f}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                to="/contact"
-                className={`block text-center mt-8 rounded-full py-3.5 font-['Inter'] text-[0.9375rem] font-medium transition-all duration-300 ${
-                  plan.popular
-                    ? 'bg-[#0a1045] text-white hover:bg-[#d4a373] hover:text-[#0a1045]'
-                    : 'border-[1.5px] border-[#0a1045] text-[#0a1045] hover:bg-[#0a1045] hover:text-white'
-                }`}
-              >
-                Start Free 14-Day Trial
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* LIVE PRODUCT PREVIEW */}
+      <section id="product" className="py-12 md:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-10">
+            <p className="font-mono text-xs uppercase tracking-[0.08em] text-[#d4a373] mb-3">Live Product</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1a1a1a] mb-4">From Upload to Analysis in 3 Minutes</h2>
+            <p className="text-[#6b7b8c] max-w-2xl mx-auto">A real, working application. Sign up, upload a contract, and get an AI-powered risk analysis instantly.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-[#f4f5f0] rounded-2xl p-6 border border-[rgba(10,16,69,0.06)]">
+              <div className="w-12 h-12 rounded-xl bg-[#0a1045] flex items-center justify-center text-white font-bold text-lg mb-4">1</div>
+              <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">Upload</h3>
+              <p className="text-sm text-[#6b7b8c] leading-relaxed">Drag and drop any PDF, Word doc, or scanned contract. Our system handles multi-page documents with OCR.</p>
+            </div>
+            <div className="bg-[#f4f5f0] rounded-2xl p-6 border border-[rgba(10,16,69,0.06)]" style={{transitionDelay: '0.1s'}}>
+              <div className="w-12 h-12 rounded-xl bg-[#0a1045] flex items-center justify-center text-white font-bold text-lg mb-4">2</div>
+              <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">AI Analysis</h3>
+              <p className="text-sm text-[#6b7b8c] leading-relaxed">Our AI scans 50+ clause types, scores each risk by severity, and translates legalese into plain English.</p>
+            </div>
+            <div className="bg-[#f4f5f0] rounded-2xl p-6 border border-[rgba(10,16,69,0.06)]" style={{transitionDelay: '0.2s'}}>
+              <div className="w-12 h-12 rounded-xl bg-[#0a1045] flex items-center justify-center text-white font-bold text-lg mb-4">3</div>
+              <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">Negotiate</h3>
+              <p className="text-sm text-[#6b7b8c] leading-relaxed">Download a redlined counter-proposal with industry-standard replacement language and benchmark data.</p>
+            </div>
+          </div>
+          {!isAuthenticated && (
+            <div className="text-center mt-8">
+              <Link to="/login" className="inline-block bg-[#0a1045] text-white rounded-full px-8 py-3.5 font-medium hover:bg-[#d4a373] hover:text-[#1a1a1a] transition-all">
+                Create Free Account &rarr;
               </Link>
             </div>
-          ))}
+          )}
         </div>
-        <p className="text-center font-['Inter'] text-[0.8125rem] text-[#a0abb8] mt-8">
-          No credit card required. Cancel anytime.
-        </p>
-      </div>
-    </section>
-  )
-}
+      </section>
 
-/* ─────────── FAQ Section ─────────── */
-function FAQ() {
-  const ref = useScrollReveal()
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
-  const faqs = [
-    { q: 'Is LenzerHub a law firm?', a: 'No — we provide AI-powered contract analysis, not legal advice. Our tool helps you identify risks and generate counter-proposals, but we always recommend having a qualified attorney review critical contracts.' },
-    { q: 'What types of contracts do you support?', a: 'We support SaaS MSAs, vendor agreements, SOWs, freelancer contracts, office leases, and more. Our AI is trained on 100,000+ contracts across all major categories.' },
-    { q: 'How accurate is the AI?', a: 'Our AI is trained on 100K+ negotiated contracts and achieves 94% accuracy on risk detection. We continuously improve our models with feedback from legal professionals.' },
-    { q: 'Is my contract data secure?', a: 'Absolutely. We are SOC 2 Type II certified with encryption at rest and in transit. Your contracts are never used to train our models — zero data retention for AI training.' },
-    { q: 'Can I integrate with my existing tools?', a: 'Yes! We offer integrations with Slack, Salesforce, Google Drive, Dropbox, HubSpot, and Zapier. Available on Growth and Scale plans.' },
-    { q: 'What happens after my free trial?', a: 'Choose a plan that works for you, or export your data and walk away. No lock-in, no hidden fees, no auto-renewal traps.' },
-  ]
-  return (
-    <section className="bg-white py-24 md:py-32" ref={ref}>
-      <div className="max-w-[800px] mx-auto" style={{ padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <h2 className="font-['Playfair_Display'] font-semibold text-[#0a1045] text-center mb-12" style={{ fontSize: 'clamp(2rem, 3vw, 2.75rem)', lineHeight: 1.1 }}>
-          Frequently Asked Questions
-        </h2>
-        <div>
-          {faqs.map((faq, i) => (
-            <div key={i} className="border-b border-[rgba(10,16,69,0.1)]">
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full flex items-center justify-between py-6 text-left group"
-                aria-expanded={openIndex === i}
-              >
-                <span className={`font-['Inter'] text-[1.0625rem] font-medium transition-colors duration-300 ${openIndex === i ? 'text-[#d4a373]' : 'text-[#0a1045] group-hover:text-[#d4a373]'}`}>
-                  {faq.q}
-                </span>
-                <svg
-                  className={`w-5 h-5 text-[#0a1045] shrink-0 ml-4 transition-transform duration-300 ${openIndex === i ? 'rotate-45' : ''}`}
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-              </button>
-              <div
-                className="overflow-hidden transition-all duration-400"
-                style={{ maxHeight: openIndex === i ? '300px' : '0', opacity: openIndex === i ? 1 : 0 }}
-              >
-                <p className="font-['Inter'] text-[0.9375rem] text-[#6b7b8c] leading-relaxed pb-6">
-                  {faq.a}
-                </p>
+      {/* FEATURES */}
+      <section id="features" className="py-12 md:py-16 bg-[#f4f5f0]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-10">
+            <p className="font-mono text-xs uppercase tracking-[0.08em] text-[#d4a373] mb-3">Features</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1a1a1a]">Everything You Need to Negotiate</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              { title: 'Risk Scanner', desc: 'AI detects 50+ risky clause types across all major contract categories' },
+              { title: 'Plain English', desc: 'No legalese. Know exactly what you\'re agreeing to with clear explanations' },
+              { title: 'Counter-Language', desc: 'Industry-standard replacement clauses tailored to your situation' },
+              { title: 'Benchmark Data', desc: 'See what similar companies negotiated — "40% reduction is typical"' },
+              { title: 'Renewal Alerts', desc: 'Never miss an auto-renewal deadline again. Get notified 60 days early' },
+              { title: 'SOC 2 Certified', desc: 'Bank-grade encryption. Your contracts are never used to train AI models' },
+            ].map((f) => (
+              <div key={f.title} className="bg-white rounded-xl p-6 border border-[rgba(10,16,69,0.06)]">
+                <div className="w-10 h-[2px] bg-[#d4a373] mb-4" />
+                <h3 className="text-base font-semibold text-[#1a1a1a] mb-2">{f.title}</h3>
+                <p className="text-sm text-[#6b7b8c] leading-relaxed">{f.desc}</p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
-  )
-}
+      </section>
 
-/* ─────────── Final CTA Section ─────────── */
-function FinalCTA() {
-  const ref = useScrollReveal()
-  const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (email.trim()) {
-      setSubmitted(true)
-      console.log('Email submitted:', email)
-    }
-  }
-  return (
-    <section className="bg-[#0a1045] py-24 md:py-28" ref={ref}>
-      <div className="max-w-[700px] mx-auto text-center" style={{ padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-        <h2 className="font-['Playfair_Display'] font-semibold text-white" style={{ fontSize: 'clamp(2rem, 3.5vw, 3rem)', lineHeight: 1.1 }}>
-          Stop Guessing. Start Negotiating.
-        </h2>
-        <p className="font-['Inter'] text-[1.0625rem] text-[rgba(255,255,255,0.7)] mt-4">
-          Your first contract review is free. Upload now and see what you've been missing.
-        </p>
-        {submitted ? (
-          <p className="font-['Inter'] text-[1rem] text-[#d4a373] mt-10">Thanks! Check your inbox for next steps.</p>
-        ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-0 mt-10 max-w-[520px] mx-auto">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your work email"
-              required
-              className="flex-1 bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.2)] border-r-0 sm:rounded-r-none rounded-full sm:rounded-l-full px-6 py-4 font-['Inter'] text-white placeholder:text-[rgba(255,255,255,0.4)] focus:outline-none focus:border-[#d4a373]"
-            />
-            <button
-              type="submit"
-              className="bg-[#d4a373] text-[#0a1045] sm:rounded-l-none rounded-full sm:rounded-r-full px-8 py-4 font-['Inter'] text-[0.9375rem] font-semibold hover:bg-white transition-all duration-300 mt-3 sm:mt-0"
-            >
-              Get Started
-            </button>
-          </form>
-        )}
-        <p className="font-['Inter'] text-[0.8125rem] text-[rgba(255,255,255,0.4)] mt-4">
-          No credit card required. Cancel anytime.
-        </p>
-      </div>
-    </section>
-  )
-}
+      {/* FOUNDER */}
+      <section className="py-12 md:py-16 bg-white">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <p className="font-mono text-xs uppercase tracking-[0.08em] text-[#d4a373] mb-3">Leadership</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#1a1a1a] mb-8">Meet the Founder</h2>
+          <div className="bg-[#f4f5f0] rounded-2xl p-8 max-w-lg mx-auto">
+            <div className="w-20 h-20 rounded-full bg-[#0a1045] flex items-center justify-center mx-auto mb-5">
+              <span className="text-2xl font-bold text-[#d4a373]">DE</span>
+            </div>
+            <h3 className="text-xl font-semibold text-[#1a1a1a]">David Emeh</h3>
+            <p className="text-sm text-[#d4a373] mt-1">Founder &amp; CEO</p>
+            <p className="text-sm text-[#6b7b8c] mt-4 leading-relaxed">
+              Former product lead at a legal-tech startup, David spent years watching SMBs get outmaneuvered in contract negotiations simply because they lacked the tools to understand what they were signing. He founded LenzerHub to put enterprise-grade contract intelligence into the hands of every growing business.
+            </p>
+            <a href="https://www.linkedin.com/in/david-emeh-956534309" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-5 text-sm text-[#6b7b8c] hover:text-[#1a1a1a] transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              View LinkedIn Profile
+            </a>
+          </div>
+        </div>
+      </section>
 
-/* ─────────── Home Page ─────────── */
-export default function Home() {
-  return (
-    <main>
-      <Hero />
-      <TrustedBy />
-      <Problem />
-      <Demo />
-      <Features />
-      <Impact />
-      <Pricing />
-      <FAQ />
-      <FinalCTA />
-    </main>
+      {/* CTA */}
+      <section className="py-12 bg-[#0a1045] text-center">
+        <div className="max-w-2xl mx-auto px-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Stop Guessing. Start Negotiating.</h2>
+          <p className="text-white/70 mb-6">Your first contract analysis is free. Sign up and see what you've been missing.</p>
+          {isAuthenticated ? (
+            <Link to="/dashboard" className="inline-block bg-[#d4a373] text-[#1a1a1a] rounded-full px-8 py-3.5 font-semibold hover:bg-white transition-all">
+              Go to Dashboard
+            </Link>
+          ) : (
+            <Link to="/login" className="inline-block bg-[#d4a373] text-[#1a1a1a] rounded-full px-8 py-3.5 font-semibold hover:bg-white transition-all">
+              Create Free Account
+            </Link>
+          )}
+        </div>
+      </section>
+
+      <Footer />
+    </div>
   )
 }
