@@ -1,38 +1,40 @@
-import {
-  CircleCheckIcon,
-  InfoIcon,
-  Loader2Icon,
-  OctagonXIcon,
-  TriangleAlertIcon,
-} from "lucide-react"
-import { useTheme } from "next-themes"
-import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 
-const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
+/**
+ * Brand-themed toaster. Dropped the next-themes dependency (the app has no
+ * theme switcher) and the hsl() token indirection, which produced invalid
+ * colours because the shadcn variables hold bare HSL triplets.
+ */
+const Toaster = (props: ToasterProps) => (
+  <Sonner
+    theme="light"
+    className="toaster group"
+    icons={{
+      success: <Dot className="text-insert" />,
+      info: <Dot className="text-graphite" />,
+      warning: <Dot className="text-sev-high" />,
+      error: <Dot className="text-strike" />,
+      loading: <Dot className="animate-pulse text-graphite-light" />,
+    }}
+    style={
+      {
+        "--normal-bg": "#FAFAF7",
+        "--normal-text": "#0E1620",
+        "--normal-border": "rgba(14,22,32,0.12)",
+        "--border-radius": "8px",
+      } as React.CSSProperties
+    }
+    {...props}
+  />
+);
 
+function Dot({ className = "" }: { className?: string }) {
   return (
-    <Sonner
-      theme={theme as ToasterProps["theme"]}
-      className="toaster group"
-      icons={{
-        success: <CircleCheckIcon className="size-4" />,
-        info: <InfoIcon className="size-4" />,
-        warning: <TriangleAlertIcon className="size-4" />,
-        error: <OctagonXIcon className="size-4" />,
-        loading: <Loader2Icon className="size-4 animate-spin" />,
-      }}
-      style={
-        {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
-        } as React.CSSProperties
-      }
-      {...props}
+    <span
+      aria-hidden="true"
+      className={`inline-block size-2 rounded-full bg-current ${className}`}
     />
-  )
+  );
 }
 
-export { Toaster }
+export { Toaster };

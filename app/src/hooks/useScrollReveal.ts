@@ -1,25 +1,46 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from "react";
 
-export default function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null)
+/**
+ * Adds `is-visible` once an element enters the viewport. Reveals immediately
+ * when the visitor prefers reduced motion, and disconnects after firing.
+ */
+export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
+  options?: { threshold?: number; delayMs?: number },
+) {
+  const ref = useRef<T | null>(null);
+
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    el.style.opacity = '0'
-    el.style.transform = 'translateY(30px)'
-    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease'
+    const node = ref.current;
+    if (!node) return;
+
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (reduced || typeof IntersectionObserver === "undefined") {
+      node.classList.add("is-visible");
+      return;
+    }
+
+    if (options?.delayMs) {
+      node.style.transitionDelay = `${options.delayMs}ms`;
+    }
+
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.style.opacity = '1'
-          el.style.transform = 'translateY(0)'
-          observer.unobserve(el)
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.disconnect();
+          }
         }
       },
-      { threshold: 0.15 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
-  return ref
+      { threshold: options?.threshold ?? 0.15, rootMargin: "0px 0px -8% 0px" },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [options?.threshold, options?.delayMs]);
+
+  return ref;
 }

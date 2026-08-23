@@ -1,261 +1,404 @@
-import { Link } from 'react-router'
-import { useAuth } from '@/hooks/useAuth'
+import { useState } from "react";
+import { Link } from "react-router";
+import ContractField from "@/components/ContractField";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
+import { Split } from "@/components/Split";
+import { ClauseInspector } from "@/components/ClauseInspector";
+import { RiskEstimator } from "@/components/RiskEstimator";
+import { PlanSizer } from "@/components/PlanSizer";
+import { severityTone } from "@/lib/severity";
+import { useAuth } from "@/hooks/useAuth";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { site } from "@/lib/site";
+import {
+  CLAUSE_LIBRARY,
+  SEVERITY_LABEL,
+  SEVERITY_ORDER,
+  type Severity,
+} from "@contracts/clause-library";
 
-function Navbar() {
-  const { isAuthenticated, logout } = useAuth()
-  const [scrolled, setScrolled] = useState(false)
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 h-16 flex items-center transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'}`}>
-      <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-2">
-          <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#0a1045"/><path d="M8 10h16M8 14h12M8 18h14M8 22h10" stroke="#d4a373" strokeWidth="2" strokeLinecap="round"/><circle cx="24" cy="23" r="3" fill="#d4a373"/></svg>
-          <span className={`text-xl font-bold transition-colors duration-300 ${scrolled ? 'text-[#1a1a1a]' : 'text-white'}`}>Lenzer<span className="font-medium">Hub</span></span>
-        </Link>
-        <div className="hidden md:flex items-center gap-8">
-          <a href="#features" className={`text-sm font-medium transition-colors ${scrolled ? 'text-[#475569] hover:text-[#d4a373]' : 'text-white/80 hover:text-white'}`}>Features</a>
-          <a href="#product" className={`text-sm font-medium transition-colors ${scrolled ? 'text-[#475569] hover:text-[#d4a373]' : 'text-white/80 hover:text-white'}`}>Product</a>
-          <Link to="/about" className={`text-sm font-medium transition-colors ${scrolled ? 'text-[#475569] hover:text-[#d4a373]' : 'text-white/80 hover:text-white'}`}>About</Link>
-          {isAuthenticated ? (
-            <div className="flex items-center gap-4">
-              <Link to="/dashboard" className={`text-sm font-medium transition-colors ${scrolled ? 'text-[#1a1a1a] hover:text-[#d4a373]' : 'text-white hover:text-[#d4a373]'}`}>Dashboard</Link>
-              <button onClick={logout} className={`text-sm transition-colors ${scrolled ? 'text-[#475569] hover:text-[#ef4444]' : 'text-white/80 hover:text-[#ef4444]'}`}>Sign Out</button>
-            </div>
-          ) : (
-            <Link to="/login" className="bg-[#d4a373] text-[#1a1a1a] rounded-full px-5 py-2.5 text-sm font-medium hover:bg-white transition-all">Sign In</Link>
-          )}
-        </div>
-      </div>
-    </nav>
-  )
-}
-
-function Footer() {
-  return (
-    <footer className="bg-[#0a1045] text-white py-12">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#d4a373"/><path d="M8 10h16M8 14h12M8 18h14M8 22h10" stroke="#0a1045" strokeWidth="2" strokeLinecap="round"/><circle cx="24" cy="23" r="3" fill="#0a1045"/></svg>
-              <span className="text-lg font-bold">Lenzer<span className="font-medium">Hub</span></span>
-            </div>
-            <p className="text-sm text-white/50">Never sign a bad contract again. AI-powered contract negotiation for SMBs.</p>
-          </div>
-          <div>
-            <h4 className="text-sm font-semibold mb-3">Product</h4>
-            <div className="space-y-2"><Link to="/dashboard" className="block text-sm text-white/50 hover:text-white transition-colors">Dashboard</Link><a href="#features" className="block text-sm text-white/50 hover:text-white transition-colors">Features</a><a href="#product" className="block text-sm text-white/50 hover:text-white transition-colors">How It Works</a></div>
-          </div>
-          <div>
-            <h4 className="text-sm font-semibold mb-3">Company</h4>
-            <div className="space-y-2"><Link to="/about" className="block text-sm text-white/50 hover:text-white transition-colors">About</Link><a href="mailto:contactus@lenzerhub.com" className="block text-sm text-white/50 hover:text-white transition-colors">Contact</a></div>
-          </div>
-          <div>
-            <h4 className="text-sm font-semibold mb-3">Legal</h4>
-            <div className="space-y-2"><span className="block text-sm text-white/50">Privacy Policy</span><span className="block text-sm text-white/50">Terms of Service</span></div>
-          </div>
-        </div>
-        <div className="mt-8 pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/30">&copy; 2026 LenzerHub. All rights reserved.</p>
-          <div className="flex gap-4">
-            <a href="#" aria-label="LinkedIn" className="text-white/40 hover:text-white transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  )
-}
-
-import { useState, useEffect } from 'react'
+const COVERAGE = [
+  {
+    area: "Renewal terms",
+    checks: "Notice windows, evergreen terms, renewal price locks",
+    output: "The exact date you must send notice by",
+  },
+  {
+    area: "Liability",
+    checks: "Caps, carve-outs, consequential damage exclusions",
+    output: "A recovery floor written in dollars, not fees paid",
+  },
+  {
+    area: "Indemnification",
+    checks: "One-way obligations, defence control, uncapped exposure",
+    output: "Mutual language your counterparty will recognise",
+  },
+  {
+    area: "Data rights",
+    checks: "Reuse grants, sub-processor transfers, deletion on exit",
+    output: "A narrowed grant limited to de-identified data",
+  },
+  {
+    area: "Termination",
+    checks: "Convenience rights, cure periods, wind-down obligations",
+    output: "Exit terms weighted toward you, not the vendor",
+  },
+  {
+    area: "Pricing",
+    checks: "Uplift caps, notice periods, true-up and overage triggers",
+    output: "A ceiling you can put in next year's budget",
+  },
+  {
+    area: "Performance",
+    checks: "Uptime commitments, measurement windows, service credits",
+    output: "A remedy that costs the vendor something",
+  },
+  {
+    area: "Intellectual property",
+    checks: "Feedback assignment, work product ownership, publicity rights",
+    output: "Your name kept off their marketing",
+  },
+];
 
 export default function Home() {
-  const { isAuthenticated } = useAuth()
+  useDocumentMeta(
+    "LenzerHub — know what you are signing before you sign it",
+    site.description,
+  );
+
+  const { isAuthenticated } = useAuth();
+  const [focus, setFocus] = useState<Severity | "all">("all");
+
+  const criticalCount = CLAUSE_LIBRARY.filter(
+    (c) => c.severity === "critical",
+  ).length;
 
   return (
-    <div className="min-h-screen bg-[#f4f5f0]">
-      <Navbar />
+    <div className="overflow-x-hidden">
+      <SiteHeader overHero />
 
-      {/* HERO */}
-      <section className="relative pt-24 pb-16 md:pt-28 md:pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a1045] via-[#1b3a5c] to-[#0a1045]" />
-        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(212,163,115,0.3) 1px, transparent 0)', backgroundSize: '40px 40px'}} />
-        <div className="relative max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-            <div>
-              <p className="font-mono text-xs uppercase tracking-[0.1em] text-[#d4a373] mb-4">AI-Powered Contract Intelligence</p>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.05] mb-6">
-                Never Sign a<br />Bad Contract Again
-              </h1>
-              <p className="text-lg text-white/75 max-w-lg mb-8 leading-relaxed">
-                Upload any contract. Our AI scans 50+ clause types, flags hidden risks, and generates redlined counter-proposals in minutes.
+      <main id="main">
+        {/* ── Hero: full viewport, 3D contract field ───────────────── */}
+        <section className="relative flex min-h-[100svh] flex-col justify-end overflow-hidden bg-ink">
+          <ContractField
+            focus={focus}
+            className="absolute inset-0 h-full w-full"
+          />
+
+          {/* Legibility floor for the type. Solid gradient, no glassmorphism. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to top, #0E1620 4%, rgba(14,22,32,0.86) 34%, rgba(14,22,32,0.30) 70%, rgba(14,22,32,0.55) 100%)",
+            }}
+          />
+
+          <div className="shell relative z-10 pb-14 pt-[calc(var(--header-h)+3rem)] md:pb-20">
+            <p className="eyebrow animate-rise-in text-insert">
+              Contract review for small and mid-sized companies
+            </p>
+
+            <h1 className="display mt-6 max-w-[16ch] text-display-xl text-paper">
+              Know what you're signing.
+            </h1>
+
+            <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] lg:items-end">
+              <p className="font-read text-[1.0625rem] leading-relaxed text-paper/70 md:text-[1.1875rem]">
+                Upload an agreement. LenzerHub marks every clause that costs you
+                money, explains why in plain English, and gives you the
+                replacement language to send back.
               </p>
-              <div className="flex flex-wrap gap-4">
+
+              <div className="flex flex-wrap items-center gap-3 lg:justify-end">
                 {isAuthenticated ? (
-                  <Link to="/dashboard" className="inline-block bg-[#d4a373] text-[#1a1a1a] rounded-full px-8 py-3.5 font-semibold hover:bg-white transition-all shadow-lg shadow-[#d4a373]/25">
-                    Go to Dashboard
+                  <Link to="/dashboard" className="btn btn-primary">
+                    Open your workspace
                   </Link>
                 ) : (
                   <>
-                    <Link to="/login" className="inline-block bg-[#d4a373] text-[#1a1a1a] rounded-full px-8 py-3.5 font-semibold hover:bg-white transition-all shadow-lg shadow-[#d4a373]/25">
-                      Try It Free
+                    <Link
+                      to="/login?intent=register"
+                      className="btn btn-primary"
+                    >
+                      Review your first contract free
                     </Link>
-                    <a href="#product" className="inline-block border border-white/30 text-white rounded-full px-8 py-3.5 font-medium hover:bg-white/10 transition-all">
-                      See How It Works
+                    <a href="#clauses" className="btn btn-onink">
+                      See what it catches
                     </a>
                   </>
                 )}
               </div>
-              <div className="flex items-center gap-6 mt-8">
-                <div className="flex -space-x-2">
-                  <div className="w-8 h-8 rounded-full bg-[#d4a373] flex items-center justify-center text-[#1a1a1a] text-xs font-bold">A</div>
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-bold">B</div>
-                  <div className="w-8 h-8 rounded-full bg-[#d4a373]/80 flex items-center justify-center text-[#1a1a1a] text-xs font-bold">C</div>
+            </div>
+
+            {/* The severity legend is also the filter driving the 3D field. */}
+            <div className="mt-12 border-t border-ink-line pt-6">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                <span className="eyebrow text-paper/35">
+                  {CLAUSE_LIBRARY.length} clause positions · {criticalCount}{" "}
+                  critical
+                </span>
+
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setFocus("all")}
+                    aria-pressed={focus === "all"}
+                    className={`rounded-sm border px-2.5 py-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.12em] transition-colors duration-200 ${
+                      focus === "all"
+                        ? "border-paper/60 bg-paper/10 text-paper"
+                        : "border-white/15 text-paper/50 hover:border-white/35 hover:text-paper"
+                    }`}
+                  >
+                    All
+                  </button>
+                  {SEVERITY_ORDER.map((severity) => {
+                    const active = focus === severity;
+                    const tone = severityTone(severity);
+                    return (
+                      <button
+                        key={severity}
+                        type="button"
+                        onClick={() => setFocus(active ? "all" : severity)}
+                        aria-pressed={active}
+                        className={`inline-flex items-center gap-2 rounded-sm border px-2.5 py-1.5 font-mono text-[0.6875rem] uppercase tracking-[0.12em] transition-colors duration-200 ${
+                          active
+                            ? "border-paper/60 bg-paper/10 text-paper"
+                            : "border-white/15 text-paper/50 hover:border-white/35 hover:text-paper"
+                        }`}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="h-1.5 w-1.5 rounded-full"
+                          style={{ backgroundColor: tone.text }}
+                        />
+                        {SEVERITY_LABEL[severity]}
+                      </button>
+                    );
+                  })}
                 </div>
-                <p className="text-sm text-white/60">Trusted by 500+ growing companies</p>
               </div>
             </div>
-            <div className="relative">
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 shadow-2xl">
-                <div className="flex items-center gap-2 mb-3">
-                  <div className="w-3 h-3 rounded-full bg-[#ef4444]" />
-                  <div className="w-3 h-3 rounded-full bg-[#f59e0b]" />
-                  <div className="w-3 h-3 rounded-full bg-[#10b981]" />
-                  <span className="text-xs text-white/40 ml-2 font-mono">Contract Analysis</span>
-                </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between p-2.5 bg-white/5 rounded-lg border-l-2 border-[#ef4444]">
-                    <div><p className="text-sm text-white font-medium">Auto-Renewal Clause</p><p className="text-xs text-white/50">10-day notice window</p></div>
-                    <span className="px-2 py-1 bg-[#ef4444]/20 text-[#ef4444] text-xs rounded-full font-medium">Critical</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2.5 bg-white/5 rounded-lg border-l-2 border-[#ef4444]">
-                    <div><p className="text-sm text-white font-medium">Liability Cap</p><p className="text-xs text-white/50">No minimum floor</p></div>
-                    <span className="px-2 py-1 bg-[#ef4444]/20 text-[#ef4444] text-xs rounded-full font-medium">Critical</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2.5 bg-white/5 rounded-lg border-l-2 border-[#f59e0b]">
-                    <div><p className="text-sm text-white font-medium">Indemnification</p><p className="text-xs text-white/50">One-sided in vendor's favor</p></div>
-                    <span className="px-2 py-1 bg-[#f59e0b]/20 text-[#f59e0b] text-xs rounded-full font-medium">High</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2.5 bg-white/5 rounded-lg border-l-2 border-[#10b981]">
-                    <div><p className="text-sm text-white font-medium">IP Assignment</p><p className="text-xs text-white/50">Standard terms</p></div>
-                    <span className="px-2 py-1 bg-[#10b981]/20 text-[#10b981] text-xs rounded-full font-medium">Low</span>
-                  </div>
-                </div>
-                <div className="mt-3 p-2.5 bg-[#d4a373]/10 rounded-lg border border-[#d4a373]/20">
-                  <p className="text-xs text-[#d4a373] font-mono uppercase tracking-wider mb-1">Overall Risk Score</p>
-                  <p className="text-2xl font-bold text-white">72<span className="text-sm text-white/50">/100</span></p>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* LIVE PRODUCT PREVIEW */}
-      <section id="product" className="py-12 md:py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-10">
-            <p className="font-mono text-xs uppercase tracking-[0.08em] text-[#d4a373] mb-3">Live Product</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1a1a1a] mb-4">From Upload to Analysis in 3 Minutes</h2>
-            <p className="text-[#6b7b8c] max-w-2xl mx-auto">A real, working application. Sign up, upload a contract, and get an AI-powered risk analysis instantly.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[#f4f5f0] rounded-2xl p-6 border border-[rgba(10,16,69,0.06)]">
-              <div className="w-12 h-12 rounded-xl bg-[#0a1045] flex items-center justify-center text-white font-bold text-lg mb-4">1</div>
-              <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">Upload</h3>
-              <p className="text-sm text-[#6b7b8c] leading-relaxed">Drag and drop any PDF, Word doc, or scanned contract. Our system handles multi-page documents with OCR.</p>
-            </div>
-            <div className="bg-[#f4f5f0] rounded-2xl p-6 border border-[rgba(10,16,69,0.06)]" style={{transitionDelay: '0.1s'}}>
-              <div className="w-12 h-12 rounded-xl bg-[#0a1045] flex items-center justify-center text-white font-bold text-lg mb-4">2</div>
-              <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">AI Analysis</h3>
-              <p className="text-sm text-[#6b7b8c] leading-relaxed">Our AI scans 50+ clause types, scores each risk by severity, and translates legalese into plain English.</p>
-            </div>
-            <div className="bg-[#f4f5f0] rounded-2xl p-6 border border-[rgba(10,16,69,0.06)]" style={{transitionDelay: '0.2s'}}>
-              <div className="w-12 h-12 rounded-xl bg-[#0a1045] flex items-center justify-center text-white font-bold text-lg mb-4">3</div>
-              <h3 className="text-lg font-semibold text-[#1a1a1a] mb-2">Negotiate</h3>
-              <p className="text-sm text-[#6b7b8c] leading-relaxed">Download a redlined counter-proposal with industry-standard replacement language and benchmark data.</p>
-            </div>
-          </div>
-          {!isAuthenticated && (
-            <div className="text-center mt-8">
-              <Link to="/login" className="inline-block bg-[#0a1045] text-white rounded-full px-8 py-3.5 font-medium hover:bg-[#d4a373] hover:text-[#1a1a1a] transition-all">
-                Create Free Account &rarr;
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
+        {/* ── What it catches ──────────────────────────────────────── */}
+        <Split
+          id="clauses"
+          eyebrow="What it catches"
+          title="The eight clauses that decide the deal."
+          lede="Every finding comes with the original text, the reason it costs you, and language you can paste straight into a counter-proposal. Pick one and read it."
+          rail={
+            <dl>
+              <dt className="eyebrow text-graphite-light">Source</dt>
+              <dd className="mt-1.5 font-read text-[0.9375rem] leading-relaxed text-graphite">
+                This is the live clause library. The analysis endpoint reads the
+                same file, so nothing here is a mock-up.
+              </dd>
+            </dl>
+          }
+        >
+          <ClauseInspector filter={focus} onFilterChange={setFocus} />
+        </Split>
 
-      {/* FEATURES */}
-      <section id="features" className="py-12 md:py-16 bg-[#f4f5f0]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-10">
-            <p className="font-mono text-xs uppercase tracking-[0.08em] text-[#d4a373] mb-3">Features</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1a1a1a]">Everything You Need to Negotiate</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {[
-              { title: 'Risk Scanner', desc: 'AI detects 50+ risky clause types across all major contract categories' },
-              { title: 'Plain English', desc: 'No legalese. Know exactly what you\'re agreeing to with clear explanations' },
-              { title: 'Counter-Language', desc: 'Industry-standard replacement clauses tailored to your situation' },
-              { title: 'Benchmark Data', desc: 'See what similar companies negotiated — "40% reduction is typical"' },
-              { title: 'Renewal Alerts', desc: 'Never miss an auto-renewal deadline again. Get notified 60 days early' },
-              { title: 'SOC 2 Certified', desc: 'Bank-grade encryption. Your contracts are never used to train AI models' },
-            ].map((f) => (
-              <div key={f.title} className="bg-white rounded-xl p-6 border border-[rgba(10,16,69,0.06)]">
-                <div className="w-10 h-[2px] bg-[#d4a373] mb-4" />
-                <h3 className="text-base font-semibold text-[#1a1a1a] mb-2">{f.title}</h3>
-                <p className="text-sm text-[#6b7b8c] leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        {/* ── Scoring ──────────────────────────────────────────────── */}
+        <Split
+          id="scoring"
+          eyebrow="How scoring works"
+          title="One number, and the arithmetic behind it."
+          lede="Severity weights are fixed and published. Build a contract from the clauses on the left and watch the score move."
+          tone="sunk"
+        >
+          <RiskEstimator />
+        </Split>
 
-      {/* FOUNDER */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <p className="font-mono text-xs uppercase tracking-[0.08em] text-[#d4a373] mb-3">Leadership</p>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#1a1a1a] mb-8">Meet the Founder</h2>
-          <div className="bg-[#f4f5f0] rounded-2xl p-8 max-w-lg mx-auto">
-            <div className="w-20 h-20 rounded-full bg-[#0a1045] flex items-center justify-center mx-auto mb-5">
-              <span className="text-2xl font-bold text-[#d4a373]">DE</span>
-            </div>
-            <h3 className="text-xl font-semibold text-[#1a1a1a]">David Emeh</h3>
-            <p className="text-sm text-[#d4a373] mt-1">Founder &amp; CEO</p>
-            <p className="text-sm text-[#6b7b8c] mt-4 leading-relaxed">
-              Former product lead at a legal-tech startup, David spent years watching SMBs get outmaneuvered in contract negotiations simply because they lacked the tools to understand what they were signing. He founded LenzerHub to put enterprise-grade contract intelligence into the hands of every growing business.
+        {/* ── Coverage ─────────────────────────────────────────────── */}
+        <CoverageSection />
+
+        {/* ── Pricing ──────────────────────────────────────────────── */}
+        <Split
+          id="pricing"
+          eyebrow="Pricing"
+          title="Priced on how much you sign."
+          lede="One variable moves the cost: how many agreements cross your desk in a year. Move the slider to the honest number."
+          tone="sunk"
+        >
+          <PlanSizer />
+        </Split>
+
+        {/* ── Founder ──────────────────────────────────────────────── */}
+        <Split
+          eyebrow="Who is behind it"
+          title="Built by someone who watched it go wrong."
+        >
+          <div className="max-w-2xl">
+            <p className="font-read text-[1.125rem] leading-relaxed text-graphite">
+              {site.founder.name} led product at a legal-tech company and spent
+              years watching small businesses lose negotiations they did not
+              know they were in. Not because the terms were outrageous, but
+              because nobody on their side had time to read forty pages before a
+              renewal date.
             </p>
-            <a href="https://www.linkedin.com/in/david-emeh-956534309" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-5 text-sm text-[#6b7b8c] hover:text-[#1a1a1a] transition-colors">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-              View LinkedIn Profile
-            </a>
+            <p className="mt-5 font-read text-[1.125rem] leading-relaxed text-graphite">
+              LenzerHub closes that gap: the clause knowledge a corporate legal
+              team has, available to a company that does not have one.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-paper-line pt-6">
+              <div>
+                <p className="text-sm font-semibold text-ink">
+                  {site.founder.name}
+                </p>
+                <p className="font-mono text-xs uppercase tracking-[0.14em] text-graphite-light">
+                  {site.founder.role}
+                </p>
+              </div>
+              <a
+                href={site.founder.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm text-graphite underline underline-offset-4 transition-colors hover:text-ink"
+              >
+                LinkedIn
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3 9L9 3M9 3H4M9 3v5"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+              <a
+                href={`mailto:${site.email}`}
+                className="text-sm text-graphite underline underline-offset-4 transition-colors hover:text-ink"
+              >
+                {site.email}
+              </a>
+            </div>
+          </div>
+        </Split>
+
+        <ClosingBand isAuthenticated={isAuthenticated} />
+      </main>
+
+      <SiteFooter />
+    </div>
+  );
+}
+
+function CoverageSection() {
+  const ref = useScrollReveal<HTMLElement>();
+
+  return (
+    <section
+      id="coverage"
+      ref={ref}
+      className="reveal scroll-mt-24 border-t border-ink-line bg-ink text-paper"
+    >
+      <div className="shell py-20 md:py-28">
+        <div className="grid gap-y-8 lg:grid-cols-[minmax(15rem,20rem)_1fr] lg:gap-x-16 xl:gap-x-24">
+          <div className="lg:sticky lg:top-[calc(var(--header-h)+3rem)] lg:self-start">
+            <p className="eyebrow text-insert">Coverage</p>
+            <h2 className="display mt-4 text-display-md text-paper">
+              Read across, not down.
+            </h2>
+            <p className="mt-5 max-w-read font-read text-[1.0625rem] leading-relaxed text-paper/60">
+              Eight categories, what gets inspected in each, and what actually
+              lands in your report.
+            </p>
+          </div>
+
+          {/* Scrolls inside its own container so the page never moves sideways. */}
+          <div className="-mx-[clamp(1.25rem,4vw,3.5rem)] overflow-x-auto px-[clamp(1.25rem,4vw,3.5rem)] lg:mx-0 lg:px-0">
+            <table className="w-full min-w-[38rem] border-collapse text-left">
+              <caption className="sr-only">
+                Clause categories LenzerHub inspects and what each produces
+              </caption>
+              <thead>
+                <tr className="border-b border-ink-line">
+                  <th scope="col" className="eyebrow py-3 pr-6 text-paper/40">
+                    Category
+                  </th>
+                  <th scope="col" className="eyebrow py-3 pr-6 text-paper/40">
+                    What gets inspected
+                  </th>
+                  <th scope="col" className="eyebrow py-3 text-paper/40">
+                    What you get back
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {COVERAGE.map((row) => (
+                  <tr
+                    key={row.area}
+                    className="border-b border-ink-line transition-colors duration-200 hover:bg-white/[0.03]"
+                  >
+                    <th
+                      scope="row"
+                      className="py-4 pr-6 align-top text-sm font-semibold text-paper"
+                    >
+                      {row.area}
+                    </th>
+                    <td className="py-4 pr-6 align-top text-sm leading-relaxed text-paper/55">
+                      {row.checks}
+                    </td>
+                    <td className="py-4 align-top text-sm leading-relaxed text-paper/75">
+                      {row.output}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      {/* CTA */}
-      <section className="py-12 bg-[#0a1045] text-center">
-        <div className="max-w-2xl mx-auto px-6">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Stop Guessing. Start Negotiating.</h2>
-          <p className="text-white/70 mb-6">Your first contract analysis is free. Sign up and see what you've been missing.</p>
-          {isAuthenticated ? (
-            <Link to="/dashboard" className="inline-block bg-[#d4a373] text-[#1a1a1a] rounded-full px-8 py-3.5 font-semibold hover:bg-white transition-all">
-              Go to Dashboard
-            </Link>
-          ) : (
-            <Link to="/login" className="inline-block bg-[#d4a373] text-[#1a1a1a] rounded-full px-8 py-3.5 font-semibold hover:bg-white transition-all">
-              Create Free Account
-            </Link>
-          )}
+function ClosingBand({ isAuthenticated }: { isAuthenticated: boolean }) {
+  const ref = useScrollReveal<HTMLElement>();
+
+  return (
+    <section ref={ref} className="reveal border-t border-paper-line bg-paper">
+      <div className="shell py-24 md:py-32">
+        <h2 className="display max-w-[14ch] text-display-lg text-ink">
+          Your next renewal is already dated.
+        </h2>
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,30rem)_minmax(0,1fr)] lg:items-end">
+          <p className="font-read text-[1.125rem] leading-relaxed text-graphite">
+            Find out what is in the agreement before the notice window closes.
+            The first review is free and takes about three minutes.
+          </p>
+          <div className="flex flex-wrap gap-3 lg:justify-end">
+            {isAuthenticated ? (
+              <Link to="/dashboard" className="btn btn-primary">
+                Open your workspace
+              </Link>
+            ) : (
+              <>
+                <Link to="/login?intent=register" className="btn btn-primary">
+                  Review a contract free
+                </Link>
+                <Link to="/contact" className="btn btn-outline">
+                  Ask a question first
+                </Link>
+              </>
+            )}
+          </div>
         </div>
-      </section>
-
-      <Footer />
-    </div>
-  )
+      </div>
+    </section>
+  );
 }

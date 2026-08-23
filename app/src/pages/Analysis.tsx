@@ -1,226 +1,311 @@
-import { useParams, Link, useNavigate } from 'react-router'
-import { useAuth } from '@/hooks/useAuth'
-import { trpc } from '@/providers/trpc-client'
-
-function Navbar() {
-  const { logout } = useAuth()
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-white/95 backdrop-blur-md border-b border-[rgba(10,16,69,0.08)] flex items-center">
-      <div className="max-w-7xl mx-auto w-full flex items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-2">
-          <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#0a1045"/><path d="M8 10h16M8 14h12M8 18h14M8 22h10" stroke="#d4a373" strokeWidth="2" strokeLinecap="round"/><circle cx="24" cy="23" r="3" fill="#d4a373"/></svg>
-          <span className="text-lg font-bold text-[#1a1a1a]">Lenzer<span className="font-medium">Hub</span></span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link to="/dashboard" className="text-sm text-[#475569] hover:text-[#1a1a1a] transition-colors">Dashboard</Link>
-          <button onClick={logout} className="text-sm text-[#475569] hover:text-[#ef4444] transition-colors">Sign Out</button>
-        </div>
-      </div>
-    </nav>
-  )
-}
-
-function SeverityIcon({ severity }: { severity: string }) {
-  const colors: Record<string, { bg: string; text: string; label: string }> = {
-    critical: { bg: 'bg-red-50', text: 'text-red-700', label: 'Critical' },
-    high: { bg: 'bg-orange-50', text: 'text-orange-700', label: 'High' },
-    medium: { bg: 'bg-yellow-50', text: 'text-yellow-700', label: 'Medium' },
-    low: { bg: 'bg-green-50', text: 'text-green-700', label: 'Low' },
-  }
-  const c = colors[severity] || colors.low
-  return (
-    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${c.bg} ${c.text}`}>
-      {c.label}
-    </span>
-  )
-}
-
-function RiskScoreRing({ score }: { score: number }) {
-  const color = score > 70 ? '#ef4444' : score > 40 ? '#f59e0b' : '#10b981'
-  const circumference = 2 * Math.PI * 54
-  const offset = circumference - (score / 100) * circumference
-  return (
-    <div className="relative w-28 h-28 mx-auto">
-      <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="54" fill="none" stroke="#e2e8f0" strokeWidth="8" />
-        <circle cx="60" cy="60" r="54" fill="none" stroke={color} strokeWidth="8" strokeLinecap="round"
-          strokeDasharray={circumference} strokeDashoffset={offset} />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-bold text-[#1a1a1a]">{score}</span>
-        <span className="text-xs text-[#6b7b8c]">/ 100</span>
-      </div>
-    </div>
-  )
-}
+import { Link, useNavigate, useParams } from "react-router";
+import { toast } from "sonner";
+import { SiteHeader } from "@/components/SiteHeader";
+import { SeverityBadge } from "@/components/Severity";
+import { severityTone } from "@/lib/severity";
+import { ClauseDiff } from "@/components/Diff";
+import { useAuth } from "@/hooks/useAuth";
+import { useDocumentMeta } from "@/hooks/useDocumentMeta";
+import { trpc } from "@/providers/trpc-client";
+import {
+  CONTRACT_TYPE_LABEL,
+  SEVERITY_LABEL,
+  SEVERITY_ORDER,
+  riskBand,
+  type ContractType,
+  type Severity,
+} from "@contracts/clause-library";
 
 export default function Analysis() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const { isLoading: authLoading } = useAuth({ redirectOnUnauthenticated: true })
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { isLoading: authLoading } = useAuth({
+    redirectOnUnauthenticated: true,
+  });
 
-  const { data: contract, isLoading } = trpc.contract.get.useQuery(
-    { id: Number(id) },
-    { enabled: !!id && !authLoading }
-  )
+  const numericId = Number(id);
+  const valid = Number.isInteger(numericId) && numericId > 0;
 
-  if (authLoading || isLoading) {
+  const query = trpc.contract.get.useQuery(
+    { id: numericId },
+    { enabled: valid && !authLoading, retry: false },
+  );
+
+  useDocumentMeta(
+    query.data ? `${query.data.title} — LenzerHub` : "Analysis — LenzerHub",
+    "Clause-by-clause findings with replacement language for your agreement.",
+  );
+
+  if (authLoading || query.isLoading) {
     return (
-      <div className="min-h-screen bg-[#f4f5f0] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#d4a373] border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
-  }
-
-  if (!contract) {
-    return (
-      <div className="min-h-screen bg-[#f4f5f0] flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-[#6b7b8c] mb-4">Contract not found</p>
-          <Link to="/dashboard" className="text-[#d4a373] hover:text-[#1a1a1a] transition-colors">Back to Dashboard</Link>
+      <div className="min-h-screen bg-paper">
+        <SiteHeader />
+        <div className="shell pb-20 pt-[calc(var(--header-h)+3rem)]">
+          <div className="h-4 w-40 animate-pulse rounded bg-paper-sunk" />
+          <div className="mt-6 h-12 w-3/4 max-w-xl animate-pulse rounded-md bg-paper-sunk" />
+          <div className="mt-10 h-40 animate-pulse rounded-lg border border-paper-line bg-paper-raised" />
+          <div className="mt-6 space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-48 animate-pulse rounded-lg border border-paper-line bg-paper-raised"
+              />
+            ))}
+          </div>
         </div>
       </div>
-    )
+    );
   }
 
-  const findings = (contract as any).findings || []
-  const criticalCount = findings.filter((f: any) => f.severity === 'critical').length
-  const highCount = findings.filter((f: any) => f.severity === 'high').length
+  if (!valid || query.isError || !query.data) {
+    return (
+      <div className="min-h-screen bg-paper">
+        <SiteHeader />
+        <main
+          id="main"
+          className="shell flex min-h-[70vh] flex-col justify-center py-24"
+        >
+          <p className="eyebrow text-strike">Report unavailable</p>
+          <h1 className="display mt-4 text-display-md text-ink">
+            This report isn't in your workspace.
+          </h1>
+          <p className="mt-5 max-w-read font-read text-[1.0625rem] leading-relaxed text-graphite">
+            The contract may have been deleted, or it belongs to another
+            account. Your workspace has everything you have analysed.
+          </p>
+          <div className="mt-8">
+            <Link to="/dashboard" className="btn btn-ink">
+              Back to your workspace
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const contract = query.data;
+  const findings = contract.findings ?? [];
+  const score = contract.riskScore ?? 0;
+  const band = riskBand(score);
+  const bandTone = severityTone(band.tone);
+
+  const counts = SEVERITY_ORDER.map((severity) => ({
+    severity,
+    count: findings.filter((f) => f.severity === severity).length,
+  }));
+
+  const exportReport = () => {
+    const lines: string[] = [
+      `${contract.title}`,
+      `${CONTRACT_TYPE_LABEL[(contract.contractType ?? "other") as ContractType]}${
+        contract.vendor ? ` · ${contract.vendor}` : ""
+      }`,
+      `Risk score: ${score}/100 (${band.label})`,
+      "",
+      contract.summary ?? "",
+      "",
+      "FINDINGS",
+      "",
+    ];
+
+    findings.forEach((finding, index) => {
+      lines.push(
+        `${index + 1}. ${finding.clauseName} [${SEVERITY_LABEL[finding.severity as Severity]}]`,
+        finding.category ? `Category: ${finding.category}` : "",
+        finding.explanation ? `Why: ${finding.explanation}` : "",
+        finding.originalText ? `As written: ${finding.originalText}` : "",
+        finding.suggestedText ? `Send instead: ${finding.suggestedText}` : "",
+        "",
+      );
+    });
+
+    const blob = new Blob([lines.filter(Boolean).join("\n")], {
+      type: "text/plain;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${contract.title.replace(/[^\w]+/g, "-").toLowerCase()}-findings.txt`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+
+    toast.success("Report downloaded", {
+      description: "Paste the replacement language straight into your redline.",
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-[#f4f5f0]">
-      <Navbar />
-      <div className="pt-24 pb-12 max-w-5xl mx-auto px-6">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 mb-6 text-sm">
-          <Link to="/dashboard" className="text-[#6b7b8c] hover:text-[#1a1a1a] transition-colors">Dashboard</Link>
-          <span className="text-[#a0abb8]">/</span>
-          <span className="text-[#1a1a1a] font-medium">Analysis Report</span>
-        </div>
+    <div className="min-h-screen overflow-x-hidden bg-paper">
+      <SiteHeader />
 
-        {/* Report Header */}
-        <div className="bg-white rounded-xl border border-[rgba(10,16,69,0.06)] p-6 md:p-8 mb-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-[#1a1a1a] mb-2">{contract.title}</h1>
-              <div className="flex flex-wrap items-center gap-3 text-sm text-[#6b7b8c]">
-                {contract.vendor && <span className="capitalize">{contract.vendor}</span>}
-                <span className="capitalize px-2.5 py-0.5 bg-[#f4f5f0] rounded-full text-xs font-medium">{contract.contractType}</span>
-                <span>{new Date(contract.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
-              </div>
-            </div>
-            {contract.riskScore !== null && (
-              <div className="flex items-center gap-6">
-                <RiskScoreRing score={contract.riskScore} />
-                <div>
-                  <p className="font-mono text-xs uppercase tracking-wider text-[#6b7b8c] mb-1">Risk Score</p>
-                  <p className={`text-lg font-bold ${
-                    contract.riskScore > 70 ? 'text-red-600' :
-                    contract.riskScore > 40 ? 'text-yellow-600' :
-                    'text-green-600'
-                  }`}>
-                    {contract.riskScore > 70 ? 'High Risk' :
-                     contract.riskScore > 40 ? 'Medium Risk' :
-                     'Low Risk'}
-                  </p>
-                </div>
-              </div>
-            )}
+      <main id="main" className="shell pb-24 pt-[calc(var(--header-h)+3rem)]">
+        <nav aria-label="Breadcrumb" className="font-mono text-xs">
+          <Link
+            to="/dashboard"
+            className="text-graphite underline underline-offset-4 transition-colors hover:text-ink"
+          >
+            Workspace
+          </Link>
+          <span className="mx-2 text-graphite-light">/</span>
+          <span className="text-ink">Report</span>
+        </nav>
+
+        <header className="mt-6 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className="eyebrow text-graphite-light">
+              {CONTRACT_TYPE_LABEL[
+                (contract.contractType ?? "other") as ContractType
+              ]}
+              {contract.vendor ? ` · ${contract.vendor}` : ""}
+            </p>
+            <h1 className="display mt-3 max-w-[18ch] text-display-md text-ink">
+              {contract.title}
+            </h1>
+            <p className="mt-3 font-mono text-xs text-graphite-light">
+              Analysed{" "}
+              {new Date(contract.updatedAt).toLocaleDateString(undefined, {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
           </div>
 
-          {contract.summary && (
-            <div className="mt-6 p-4 bg-[#f4f5f0] rounded-lg border border-[rgba(10,16,69,0.04)]">
-              <p className="text-sm text-[#475569] leading-relaxed">{contract.summary}</p>
+          <div className="rounded-lg border border-paper-line bg-ink p-6 text-paper lg:min-w-[16rem]">
+            <p className="eyebrow text-paper/40">Risk score</p>
+            <p className="display mt-2 text-[3.5rem] leading-none tabular-nums">
+              {score}
+              <span className="text-[1.25rem] text-paper/35">/100</span>
+            </p>
+            <p
+              className="mt-2 font-mono text-xs uppercase tracking-[0.14em]"
+              style={{ color: bandTone.text }}
+            >
+              {band.label}
+            </p>
+            <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full"
+                style={{ width: `${score}%`, backgroundColor: bandTone.text }}
+              />
             </div>
+          </div>
+        </header>
+
+        {contract.summary ? (
+          <p className="mt-10 max-w-3xl border-l-2 border-insert pl-5 font-read text-[1.0625rem] leading-relaxed text-graphite">
+            {contract.summary}
+          </p>
+        ) : null}
+
+        {/* Severity tally as a compact data row, not four coloured cards. */}
+        <dl className="mt-10 flex flex-wrap gap-x-8 gap-y-4 border-y border-paper-line py-5">
+          {counts.map(({ severity, count }) => {
+            const tone = severityTone(severity);
+            return (
+              <div key={severity} className="flex items-baseline gap-2.5">
+                <dt className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-graphite">
+                  {SEVERITY_LABEL[severity]}
+                </dt>
+                <dd
+                  className="display text-[1.5rem] leading-none tabular-nums"
+                  style={{ color: count ? tone.text : "#8A97A6" }}
+                >
+                  {count}
+                </dd>
+              </div>
+            );
+          })}
+        </dl>
+
+        <section aria-labelledby="findings-heading" className="mt-14">
+          <h2
+            id="findings-heading"
+            className="display text-display-sm text-ink"
+          >
+            Findings
+          </h2>
+
+          {!findings.length ? (
+            <p className="mt-6 rounded-lg border border-dashed border-paper-line p-8 text-center text-sm text-graphite">
+              No findings recorded for this contract yet.
+            </p>
+          ) : (
+            <ol className="mt-8 space-y-12">
+              {findings.map((finding, index) => (
+                <li key={finding.id} className="scroll-mt-24">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-mono text-xs text-graphite-light">
+                        {String(index + 1).padStart(2, "0")}
+                        {finding.category ? ` · ${finding.category}` : ""}
+                      </p>
+                      <h3 className="display mt-2 text-display-sm text-ink">
+                        {finding.clauseName}
+                      </h3>
+                    </div>
+                    <SeverityBadge severity={finding.severity as Severity} />
+                  </div>
+
+                  {finding.explanation ? (
+                    <p className="mt-4 max-w-3xl font-read text-[1.0625rem] leading-relaxed text-graphite">
+                      {finding.explanation}
+                    </p>
+                  ) : null}
+
+                  <div className="mt-6">
+                    <ClauseDiff
+                      original={finding.originalText}
+                      suggested={finding.suggestedText}
+                    />
+                  </div>
+
+                  {finding.suggestedText ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        void navigator.clipboard
+                          .writeText(finding.suggestedText ?? "")
+                          .then(() =>
+                            toast.success("Replacement language copied"),
+                          )
+                          .catch(() =>
+                            toast.error("Could not copy", {
+                              description:
+                                "Your browser blocked clipboard access. Select the text and copy it manually.",
+                            }),
+                          );
+                      }}
+                      className="mt-4 font-mono text-xs uppercase tracking-[0.14em] text-insert-deep underline underline-offset-4 transition-colors hover:text-ink"
+                    >
+                      Copy replacement language
+                    </button>
+                  ) : null}
+                </li>
+              ))}
+            </ol>
           )}
+        </section>
 
-          {/* Severity counts */}
-          <div className="grid grid-cols-4 gap-4 mt-6">
-            <div className="text-center p-3 bg-red-50 rounded-lg">
-              <p className="text-xl font-bold text-red-700">{criticalCount}</p>
-              <p className="text-xs text-red-600">Critical</p>
-            </div>
-            <div className="text-center p-3 bg-orange-50 rounded-lg">
-              <p className="text-xl font-bold text-orange-700">{highCount}</p>
-              <p className="text-xs text-orange-600">High</p>
-            </div>
-            <div className="text-center p-3 bg-yellow-50 rounded-lg">
-              <p className="text-xl font-bold text-yellow-700">{findings.filter((f: any) => f.severity === 'medium').length}</p>
-              <p className="text-xs text-yellow-600">Medium</p>
-            </div>
-            <div className="text-center p-3 bg-green-50 rounded-lg">
-              <p className="text-xl font-bold text-green-700">{findings.filter((f: any) => f.severity === 'low').length}</p>
-              <p className="text-xs text-green-600">Low</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Findings */}
-        <h2 className="text-lg font-semibold text-[#1a1a1a] mb-4">Detailed Findings ({findings.length})</h2>
-        <div className="space-y-4">
-          {findings.map((finding: any, i: number) => (
-            <div key={finding.id} className="bg-white rounded-xl border border-[rgba(10,16,69,0.06)] overflow-hidden">
-              <div className="p-5 md:p-6">
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-full bg-[#0a1045] text-white flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                    <h3 className="text-base font-semibold text-[#1a1a1a]">{finding.clauseName}</h3>
-                  </div>
-                  <SeverityIcon severity={finding.severity} />
-                </div>
-                {finding.category && (
-                  <span className="inline-block px-2.5 py-0.5 bg-[#f4f5f0] rounded-full text-xs text-[#6b7b8c] font-medium mb-4">{finding.category}</span>
-                )}
-
-                {finding.explanation && (
-                  <p className="text-sm text-[#475569] leading-relaxed mb-5 p-3 bg-blue-50 rounded-lg border-l-2 border-blue-400">
-                    {finding.explanation}
-                  </p>
-                )}
-
-                {finding.originalText && (
-                  <div className="mb-4">
-                    <p className="text-xs font-mono uppercase tracking-wider text-red-600 mb-2 flex items-center gap-1.5">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                      Current Language
-                    </p>
-                    <div className="p-3 bg-red-50 rounded-lg border border-red-100">
-                      <p className="text-sm text-[#475569] line-through opacity-70">{finding.originalText}</p>
-                    </div>
-                  </div>
-                )}
-
-                {finding.suggestedText && (
-                  <div>
-                    <p className="text-xs font-mono uppercase tracking-wider text-green-600 mb-2 flex items-center gap-1.5">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                      Suggested Replacement
-                    </p>
-                    <div className="p-3 bg-green-50 rounded-lg border border-green-100">
-                      <p className="text-sm text-[#1a1a1a] font-medium">{finding.suggestedText}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-8 flex justify-between items-center">
+        <div className="mt-16 flex flex-wrap items-center justify-between gap-4 border-t border-paper-line pt-8">
           <button
-            onClick={() => navigate('/dashboard')}
-            className="text-sm text-[#6b7b8c] hover:text-[#1a1a1a] transition-colors"
+            type="button"
+            onClick={() => navigate("/dashboard")}
+            className="btn btn-outline"
           >
-            &larr; Back to Dashboard
+            Back to workspace
           </button>
           <button
-            onClick={() => alert('Export feature coming soon')}
-            className="px-5 py-2.5 bg-[#0a1045] text-white rounded-full text-sm font-medium hover:bg-[#d4a373] hover:text-[#1a1a1a] transition-all"
+            type="button"
+            onClick={exportReport}
+            className="btn btn-primary"
           >
-            Export Report
+            Download findings
           </button>
         </div>
-      </div>
+      </main>
     </div>
-  )
+  );
 }
