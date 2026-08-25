@@ -65,6 +65,18 @@ app.use("/api/trpc/*", async (c) => {
 // Health check
 app.get("/api/health", (c) => c.json({ ok: true, ts: Date.now() }));
 
+// Temporary diagnostic: every DB/bcrypt/jwt piece of register is confirmed
+// fast in isolation and even chained together outside tRPC. The one thing
+// every passing probe so far has in common (and register doesn't) is that
+// they're all GET requests with no body. This isolates raw POST-body
+// reading through the same getRequestListener(app.fetch) Vercel adapter,
+// with zero DB/tRPC involved, to check for a body-parsing hang.
+app.post("/api/db-health-post", async (c) => {
+  const start = Date.now();
+  const body = await c.req.text();
+  return c.json({ ok: true, ms: Date.now() - start, bodyLength: body.length });
+});
+
 // Temporary diagnostic: isolates DB connectivity from the rest of the
 // signup flow so a hang can be timed and attributed to the DB layer
 // specifically. Remove once the TiDB connectivity issue is resolved.
