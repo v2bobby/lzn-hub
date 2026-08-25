@@ -4,6 +4,7 @@ import { getRequestListener } from "@hono/node-server";
 import { bodyLimit } from "hono/body-limit";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { sql, eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { createOAuthCallbackHandler } from "./kimi/auth";
@@ -138,6 +139,16 @@ app.get("/api/db-health-insert", async (c) => {
       500,
     );
   }
+});
+
+// Temporary diagnostic: every DB-touching piece of register (findFirst,
+// insert) is confirmed fast in isolation, yet the real register mutation
+// still hangs the full 30s. bcrypt.hash is the only remaining untested,
+// CPU-bound (non-DB) piece of that handler.
+app.get("/api/db-health-bcrypt", async (c) => {
+  const start = Date.now();
+  const hash = await bcrypt.hash("password123", 12);
+  return c.json({ ok: true, ms: Date.now() - start, hash });
 });
 
 // Export for Vercel serverless.
