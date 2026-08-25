@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { Hono } from "hono";
-import { handle } from "hono/vercel";
+import { getRequestListener } from "@hono/node-server";
 import { bodyLimit } from "hono/body-limit";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./router";
@@ -60,7 +60,17 @@ app.use("/api/trpc/*", async (c) => {
 app.get("/api/health", (c) => c.json({ ok: true, ts: Date.now() }));
 
 // Export for Vercel serverless.
-// This file is bundled by esbuild into api/index.js at build time so that the
-// Vercel Node runtime never has to compile TypeScript or resolve the
-// @db/* and @contracts/* path aliases, which it cannot do.
-export default handle(app);
+//
+// Two things matter here:
+//
+// 1. This file is bundled by esbuild into api/index.js at build time, so the
+//    Vercel Node runtime never has to compile TypeScript or resolve the
+//    @db/* and @contracts/* path aliases, which it cannot do.
+//
+// 2. The export is a Node-style (req, res) listener, not hono/vercel's
+//    handle(). Vercel's Node runtime invokes handlers with Node's
+//    IncomingMessage/ServerResponse. A fetch-style handler receives those,
+//    fails to read them as a Request, returns a Response that nothing
+//    consumes, and never calls res.end() - which surfaces as
+//    FUNCTION_INVOCATION_TIMEOUT rather than an error.
+export default getRequestListener(app.fetch);
