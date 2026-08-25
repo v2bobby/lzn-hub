@@ -3,11 +3,12 @@ import { Hono } from "hono";
 import { getRequestListener } from "@hono/node-server";
 import { bodyLimit } from "hono/body-limit";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { createOAuthCallbackHandler } from "./kimi/auth";
 import { getDb } from "./queries/connection";
+import { users } from "@db/schema";
 
 const app = new Hono();
 
@@ -70,6 +71,30 @@ app.get("/api/db-health", async (c) => {
     const db = getDb();
     await db.execute(sql`SELECT 1`);
     return c.json({ ok: true, ms: Date.now() - start });
+  } catch (err) {
+    return c.json(
+      {
+        ok: false,
+        ms: Date.now() - start,
+        message: err instanceof Error ? err.message : String(err),
+        code: (err as { code?: string })?.code,
+      },
+      500,
+    );
+  }
+});
+
+// Temporary diagnostic: same query the register/login mutations run
+// (db.query.users.findFirst via the relational query builder), isolated
+// from raw sql`` to see whether RQB itself is what hangs.
+app.get("/api/db-health-rqb", async (c) => {
+  const start = Date.now();
+  try {
+    const db = getDb();
+    const found = await db.query.users.findFirst({
+      where: eq(users.email, "diagnostic-probe@example.com"),
+    });
+    return c.json({ ok: true, ms: Date.now() - start, found: !!found });
   } catch (err) {
     return c.json(
       {
