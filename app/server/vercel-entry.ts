@@ -1,17 +1,12 @@
 import "dotenv/config";
+import type { IncomingMessage, ServerResponse } from "http";
 import { Hono } from "hono";
 import { getRequestListener } from "@hono/node-server";
 import { bodyLimit } from "hono/body-limit";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { sql, eq } from "drizzle-orm";
-import bcrypt from "bcryptjs";
-import { SignJWT } from "jose";
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { createOAuthCallbackHandler } from "./kimi/auth";
-import { getDb } from "./queries/connection";
-import { users } from "@db/schema";
-import { env } from "./lib/env";
 
 const app = new Hono();
 
@@ -65,175 +60,20 @@ app.use("/api/trpc/*", async (c) => {
 // Health check
 app.get("/api/health", (c) => c.json({ ok: true, ts: Date.now() }));
 
-// Temporary diagnostic: every DB/bcrypt/jwt piece of register is confirmed
-// fast in isolation and even chained together outside tRPC. The one thing
-// every passing probe so far has in common (and register doesn't) is that
-// they're all GET requests with no body. This isolates raw POST-body
-// reading through the same getRequestListener(app.fetch) Vercel adapter,
-// with zero DB/tRPC involved, to check for a body-parsing hang.
-app.post("/api/db-health-post", async (c) => {
-  const start = Date.now();
-  const body = await c.req.text();
-  return c.json({ ok: true, ms: Date.now() - start, bodyLength: body.length });
-});
+const honoListener = getRequestListener(app.fetch);
 
-// Temporary diagnostic: isolates DB connectivity from the rest of the
-// signup flow so a hang can be timed and attributed to the DB layer
-// specifically. Remove once the TiDB connectivity issue is resolved.
-app.get("/api/db-health", async (c) => {
-  const start = Date.now();
-  try {
-    const db = getDb();
-    await db.execute(sql`SELECT 1`);
-    return c.json({ ok: true, ms: Date.now() - start });
-  } catch (err) {
-    return c.json(
-      {
-        ok: false,
-        ms: Date.now() - start,
-        message: err instanceof Error ? err.message : String(err),
-        code: (err as { code?: string })?.code,
-      },
-      500,
-    );
-  }
-});
-
-// Temporary diagnostic: same query the register/login mutations run
-// (db.query.users.findFirst via the relational query builder), isolated
-// from raw sql`` to see whether RQB itself is what hangs.
-app.get("/api/db-health-rqb", async (c) => {
-  const start = Date.now();
-  try {
-    const db = getDb();
-    const found = await db.query.users.findFirst({
-      where: eq(users.email, "diagnostic-probe@example.com"),
-    });
-    return c.json({ ok: true, ms: Date.now() - start, found: !!found });
-  } catch (err) {
-    return c.json(
-      {
-        ok: false,
-        ms: Date.now() - start,
-        message: err instanceof Error ? err.message : String(err),
-        code: (err as { code?: string })?.code,
-      },
-      500,
-    );
-  }
-});
-
-// Temporary diagnostic: isolates the insert (the other half of register,
-// after the findFirst check that's already confirmed fast) to see whether
-// $returningId() specifically is what hangs.
-app.get("/api/db-health-insert", async (c) => {
-  const start = Date.now();
-  try {
-    const db = getDb();
-    const probeEmail = `diagnostic-probe+${Date.now()}@example.com`;
-    const [result] = await db
-      .insert(users)
-      .values({
-        email: probeEmail,
-        name: "Diagnostic Probe",
-        passwordHash: "not-a-real-hash",
-        authType: "local",
-        lastSignInAt: new Date(),
-      })
-      .$returningId();
-    return c.json({ ok: true, ms: Date.now() - start, insertedId: result?.id });
-  } catch (err) {
-    return c.json(
-      {
-        ok: false,
-        ms: Date.now() - start,
-        message: err instanceof Error ? err.message : String(err),
-        code: (err as { code?: string })?.code,
-      },
-      500,
-    );
-  }
-});
-
-// Temporary diagnostic: every DB-touching piece of register (findFirst,
-// insert) is confirmed fast in isolation, yet the real register mutation
-// still hangs the full 30s. bcrypt.hash is the only remaining untested,
-// CPU-bound (non-DB) piece of that handler.
-app.get("/api/db-health-bcrypt", async (c) => {
-  const start = Date.now();
-  const hash = await bcrypt.hash("password123", 12);
-  return c.json({ ok: true, ms: Date.now() - start, hash });
-});
-
-// Temporary diagnostic: every individual piece of register (findFirst via
-// raw sql and RQB, insert+$returningId, bcrypt.hash) is confirmed fast in
-// isolation, yet the real mutation still hangs. This replicates the exact
-// register sequence end-to-end (outside tRPC) to see whether chaining them
-// in one request is what breaks, vs. something in the tRPC layer itself.
-app.get("/api/db-health-full", async (c) => {
-  const start = Date.now();
-  const steps: Record<string, number> = {};
-  try {
-    const db = getDb();
-    const probeEmail = `diagnostic-full+${Date.now()}@example.com`;
-
-    let t = Date.now();
-    const existing = await db.query.users.findFirst({
-      where: eq(users.email, probeEmail),
-    });
-    steps.findFirst = Date.now() - t;
-
-    t = Date.now();
-    const passwordHash = await bcrypt.hash("password123", 12);
-    steps.bcrypt = Date.now() - t;
-
-    t = Date.now();
-    const [result] = await db
-      .insert(users)
-      .values({
-        email: probeEmail,
-        name: "Diagnostic Full",
-        passwordHash,
-        authType: "local",
-        lastSignInAt: new Date(),
-      })
-      .$returningId();
-    steps.insert = Date.now() - t;
-
-    t = Date.now();
-    const jwtSecret = new TextEncoder().encode(env.jwtSecret);
-    const token = await new SignJWT({ userId: result.id, type: "local" })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime("7d")
-      .sign(jwtSecret);
-    steps.sign = Date.now() - t;
-
-    return c.json({
-      ok: true,
-      ms: Date.now() - start,
-      steps,
-      existing: !!existing,
-      insertedId: result?.id,
-      hasToken: !!token,
-    });
-  } catch (err) {
-    return c.json(
-      {
-        ok: false,
-        ms: Date.now() - start,
-        steps,
-        message: err instanceof Error ? err.message : String(err),
-        code: (err as { code?: string })?.code,
-      },
-      500,
-    );
-  }
-});
+function readRawBody(req: IncomingMessage): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    req.on("data", (chunk) => chunks.push(chunk));
+    req.on("end", () => resolve(Buffer.concat(chunks)));
+    req.on("error", reject);
+  });
+}
 
 // Export for Vercel serverless.
 //
-// Two things matter here:
+// Three things matter here:
 //
 // 1. This file is bundled by esbuild into api/index.js at build time, so the
 //    Vercel Node runtime never has to compile TypeScript or resolve the
@@ -245,42 +85,21 @@ app.get("/api/db-health-full", async (c) => {
 //    fails to read them as a Request, returns a Response that nothing
 //    consumes, and never calls res.end() - which surfaces as
 //    FUNCTION_INVOCATION_TIMEOUT rather than an error.
-const honoListener = getRequestListener(app.fetch);
-
-// Temporary diagnostic: every POST with a body hangs the full function
-// timeout even with zero app logic involved (see /api/db-health-post).
-// @hono/node-server's Vercel body handling takes a fast path when Vercel
-// attaches `rawBody` (a Buffer) to the raw incoming request, and falls
-// back to a pull-based Readable.toWeb(incoming).getReader() stream
-// otherwise - which is where the hang is. This inspects the raw Node
-// request Vercel actually hands us, bypassing Hono entirely, to see
-// which path we're on.
-export default function handler(req: any, res: any) {
-  if (req.method === "POST" && req.url === "/api/_debug-req") {
-    let bodyEventFired = false;
-    req.on("data", () => {
-      bodyEventFired = true;
-    });
-    setTimeout(() => {
-      res.setHeader("content-type", "application/json");
-      res.end(
-        JSON.stringify({
-          hasRawBody: "rawBody" in req,
-          rawBodyType: typeof req.rawBody,
-          rawBodyIsBuffer: req.rawBody instanceof Buffer,
-          rawBodyLength: req.rawBody?.length,
-          hasBody: "body" in req,
-          bodyType: typeof req.body,
-          readable: req.readable,
-          readableEnded: req.readableEnded,
-          complete: req.complete,
-          dataEventFiredWithin200ms: bodyEventFired,
-          contentLength: req.headers["content-length"],
-          transferEncoding: req.headers["transfer-encoding"],
-        }),
-      );
-    }, 200);
-    return;
+//
+// 3. @hono/node-server's Vercel body handling only takes its fast path
+//    (synchronously wrapping the body into a Request) when Vercel attaches
+//    `rawBody` (a Buffer) to the incoming request. On this runtime it
+//    doesn't, so it falls back to `Readable.toWeb(incoming).getReader()`,
+//    a pull-based read against Vercel's request object that never
+//    resolves - every POST with a body (register, login, contract
+//    mutations, etc.) hangs for the full function timeout with no error.
+//    Buffering the body ourselves with plain 'data'/'end' events (which
+//    Vercel's request object does support) and attaching it as `rawBody`
+//    before handing off routes @hono/node-server onto its working
+//    synchronous path instead.
+export default async function handler(req: IncomingMessage, res: ServerResponse) {
+  if (req.method !== "GET" && req.method !== "HEAD" && !("rawBody" in req)) {
+    (req as IncomingMessage & { rawBody?: Buffer }).rawBody = await readRawBody(req);
   }
   return honoListener(req, res);
 }
