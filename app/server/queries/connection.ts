@@ -12,6 +12,11 @@ export function getDb() {
     instance = drizzle(env.databaseUrl, {
       mode: "planetscale",
       schema: fullSchema,
+      connection: {
+        uri: env.databaseUrl,
+        ssl: { minVersion: "TLSv1.2", rejectUnauthorized: true },
+        connectTimeout: 10_000,
+      },
     });
   }
   return instance;
