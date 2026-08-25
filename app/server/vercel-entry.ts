@@ -3,9 +3,11 @@ import { Hono } from "hono";
 import { getRequestListener } from "@hono/node-server";
 import { bodyLimit } from "hono/body-limit";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import { sql } from "drizzle-orm";
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { createOAuthCallbackHandler } from "./kimi/auth";
+import { getDb } from "./queries/connection";
 
 const app = new Hono();
 
@@ -58,6 +60,28 @@ app.use("/api/trpc/*", async (c) => {
 
 // Health check
 app.get("/api/health", (c) => c.json({ ok: true, ts: Date.now() }));
+
+// Temporary diagnostic: isolates DB connectivity from the rest of the
+// signup flow so a hang can be timed and attributed to the DB layer
+// specifically. Remove once the TiDB connectivity issue is resolved.
+app.get("/api/db-health", async (c) => {
+  const start = Date.now();
+  try {
+    const db = getDb();
+    await db.execute(sql`SELECT 1`);
+    return c.json({ ok: true, ms: Date.now() - start });
+  } catch (err) {
+    return c.json(
+      {
+        ok: false,
+        ms: Date.now() - start,
+        message: err instanceof Error ? err.message : String(err),
+        code: (err as { code?: string })?.code,
+      },
+      500,
+    );
+  }
+});
 
 // Export for Vercel serverless.
 //

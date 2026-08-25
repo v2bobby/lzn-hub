@@ -13,7 +13,6 @@ export function getDb() {
       // TiDB Serverless requires TLS and silently drops plaintext connection
       // attempts rather than refusing them, so an untrusted connection hangs
       // until the platform timeout instead of returning an error.
-      //
       // drizzle.config.ts appends `sslaccept=strict` for drizzle-kit, but that
       // file is only read by the CLI. The runtime connection needs its own TLS
       // configuration, which is what this block is.
