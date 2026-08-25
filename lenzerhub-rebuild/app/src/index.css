@@ -1,0 +1,314 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* shadcn tokens remapped onto the LenzerHub palette so the ui/
+       primitives inherit the brand instead of the default slate theme. */
+    --background: 75 12% 94%;
+    --foreground: 210 39% 9%;
+    --card: 60 20% 98%;
+    --card-foreground: 210 39% 9%;
+    --popover: 60 20% 98%;
+    --popover-foreground: 210 39% 9%;
+    --primary: 210 39% 9%;
+    --primary-foreground: 60 20% 98%;
+    --secondary: 75 10% 89%;
+    --secondary-foreground: 210 39% 9%;
+    --muted: 75 10% 89%;
+    --muted-foreground: 211 12% 38%;
+    --accent: 157 50% 36%;
+    --accent-foreground: 60 20% 98%;
+    --destructive: 10 73% 41%;
+    --destructive-foreground: 60 20% 98%;
+    --border: 210 39% 9%;
+    --input: 210 20% 82%;
+    --ring: 157 50% 36%;
+    --radius: 0.5rem;
+    --sidebar-background: 210 39% 9%;
+    --sidebar-foreground: 210 15% 78%;
+    --sidebar-primary: 157 50% 36%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 30% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 210 25% 18%;
+    --sidebar-ring: 157 50% 36%;
+
+    --header-h: 4.25rem;
+  }
+
+  * {
+    border-color: theme("colors.paper.line");
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Anchor targets clear the fixed header. */
+    scroll-padding-top: calc(var(--header-h) + 1.5rem);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: theme("colors.paper.DEFAULT");
+    color: theme("colors.ink.DEFAULT");
+    font-family: theme("fontFamily.sans");
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Nothing on this site is allowed to scroll sideways. */
+    overflow-x: hidden;
+  }
+
+  /* Every root wrapper inherits the horizontal clamp. */
+  #root {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: theme("fontFamily.display");
+    font-variation-settings: "wdth" 108;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, branded keyboard focus everywhere. */
+  :focus-visible {
+    outline: 2px solid theme("colors.insert.DEFAULT");
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  ::selection {
+    background: theme("colors.insert.DEFAULT");
+    color: #fff;
+  }
+
+  img,
+  svg,
+  video,
+  canvas,
+  table {
+    max-width: 100%;
+  }
+}
+
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: theme("maxWidth.shell");
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 3.5rem);
+  }
+
+  /* The load-bearing type treatment: extended-width Archivo, very tight. */
+  .display {
+    font-family: theme("fontFamily.display");
+    font-weight: 800;
+    font-variation-settings: "wdth" 115;
+    letter-spacing: -0.035em;
+    line-height: 0.88;
+    text-transform: none;
+  }
+
+  .eyebrow {
+    font-family: theme("fontFamily.mono");
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .prose-read {
+    font-family: theme("fontFamily.read");
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: theme("colors.graphite.DEFAULT");
+  }
+
+  /* Crisp bordered surface. Replaces the old shadow-2xl glass cards. */
+  .surface {
+    background: theme("colors.paper.raised");
+    border: 1px solid theme("colors.paper.line");
+    border-radius: theme("borderRadius.lg");
+  }
+
+  .surface-ink {
+    background: theme("colors.ink.2");
+    border: 1px solid theme("colors.ink.line");
+    border-radius: theme("borderRadius.lg");
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: theme("borderRadius.md");
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: -0.005em;
+    padding: 0.8125rem 1.375rem;
+    border: 1px solid transparent;
+    transition:
+      background-color 0.18s theme("transitionTimingFunction.precise"),
+      color 0.18s theme("transitionTimingFunction.precise"),
+      border-color 0.18s theme("transitionTimingFunction.precise"),
+      transform 0.12s theme("transitionTimingFunction.precise");
+    cursor: pointer;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+  }
+
+  .btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-primary {
+    background: theme("colors.insert.DEFAULT");
+    color: #fff;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: theme("colors.insert.deep");
+  }
+
+  .btn-ink {
+    background: theme("colors.ink.DEFAULT");
+    color: theme("colors.paper.DEFAULT");
+  }
+
+  .btn-ink:hover:not(:disabled) {
+    background: theme("colors.ink.2");
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: theme("colors.ink.DEFAULT");
+    border-color: theme("colors.paper.line");
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    border-color: theme("colors.ink.DEFAULT");
+    background: theme("colors.paper.sunk");
+  }
+
+  .btn-onink {
+    background: transparent;
+    color: theme("colors.paper.DEFAULT");
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+
+  .btn-onink:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .field {
+    width: 100%;
+    background: theme("colors.paper.raised");
+    border: 1px solid theme("colors.paper.line");
+    border-radius: theme("borderRadius.md");
+    padding: 0.6875rem 0.875rem;
+    font-size: 0.9375rem;
+    color: theme("colors.ink.DEFAULT");
+    transition:
+      border-color 0.18s theme("transitionTimingFunction.precise"),
+      background-color 0.18s theme("transitionTimingFunction.precise");
+  }
+
+  .field::placeholder {
+    color: theme("colors.graphite.light");
+  }
+
+  .field:hover {
+    border-color: rgba(14, 22, 32, 0.24);
+  }
+
+  .field:focus {
+    outline: none;
+    border-color: theme("colors.insert.DEFAULT");
+    box-shadow: 0 0 0 3px rgba(46, 139, 101, 0.16);
+  }
+
+  .field[aria-invalid="true"] {
+    border-color: theme("colors.strike.DEFAULT");
+  }
+
+  .field-label {
+    display: block;
+    font-family: theme("fontFamily.mono");
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: theme("colors.graphite.DEFAULT");
+    margin-bottom: 0.4375rem;
+  }
+
+  /* Hairline that reads as structure, not decoration. */
+  .rule {
+    height: 1px;
+    background: theme("colors.paper.line");
+    border: 0;
+  }
+
+  .rule-ink {
+    height: 1px;
+    background: theme("colors.ink.line");
+    border: 0;
+  }
+}
+
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity 0.7s theme("transitionTimingFunction.precise"),
+      transform 0.7s theme("transitionTimingFunction.precise");
+    will-change: opacity, transform;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
