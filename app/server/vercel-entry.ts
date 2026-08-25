@@ -5,11 +5,13 @@ import { bodyLimit } from "hono/body-limit";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { sql, eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { SignJWT } from "jose";
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { createOAuthCallbackHandler } from "./kimi/auth";
 import { getDb } from "./queries/connection";
 import { users } from "@db/schema";
+import { env } from "./lib/env";
 
 const app = new Hono();
 
@@ -149,6 +151,72 @@ app.get("/api/db-health-bcrypt", async (c) => {
   const start = Date.now();
   const hash = await bcrypt.hash("password123", 12);
   return c.json({ ok: true, ms: Date.now() - start, hash });
+});
+
+// Temporary diagnostic: every individual piece of register (findFirst via
+// raw sql and RQB, insert+$returningId, bcrypt.hash) is confirmed fast in
+// isolation, yet the real mutation still hangs. This replicates the exact
+// register sequence end-to-end (outside tRPC) to see whether chaining them
+// in one request is what breaks, vs. something in the tRPC layer itself.
+app.get("/api/db-health-full", async (c) => {
+  const start = Date.now();
+  const steps: Record<string, number> = {};
+  try {
+    const db = getDb();
+    const probeEmail = `diagnostic-full+${Date.now()}@example.com`;
+
+    let t = Date.now();
+    const existing = await db.query.users.findFirst({
+      where: eq(users.email, probeEmail),
+    });
+    steps.findFirst = Date.now() - t;
+
+    t = Date.now();
+    const passwordHash = await bcrypt.hash("password123", 12);
+    steps.bcrypt = Date.now() - t;
+
+    t = Date.now();
+    const [result] = await db
+      .insert(users)
+      .values({
+        email: probeEmail,
+        name: "Diagnostic Full",
+        passwordHash,
+        authType: "local",
+        lastSignInAt: new Date(),
+      })
+      .$returningId();
+    steps.insert = Date.now() - t;
+
+    t = Date.now();
+    const jwtSecret = new TextEncoder().encode(env.jwtSecret);
+    const token = await new SignJWT({ userId: result.id, type: "local" })
+      .setProtectedHeader({ alg: "HS256" })
+      .setIssuedAt()
+      .setExpirationTime("7d")
+      .sign(jwtSecret);
+    steps.sign = Date.now() - t;
+
+    return c.json({
+      ok: true,
+      ms: Date.now() - start,
+      steps,
+      existing: !!existing,
+      insertedId: result?.id,
+      hasToken: !!token,
+    });
+  } catch (err) {
+    return c.json(
+      {
+        ok: false,
+        ms: Date.now() - start,
+        steps,
+        message: err instanceof Error ? err.message : String(err),
+        code: (err as { code?: string })?.code,
+      },
+      500,
+    );
+  }
 });
 
 // Export for Vercel serverless.
