@@ -245,4 +245,42 @@ app.get("/api/db-health-full", async (c) => {
 //    fails to read them as a Request, returns a Response that nothing
 //    consumes, and never calls res.end() - which surfaces as
 //    FUNCTION_INVOCATION_TIMEOUT rather than an error.
-export default getRequestListener(app.fetch);
+const honoListener = getRequestListener(app.fetch);
+
+// Temporary diagnostic: every POST with a body hangs the full function
+// timeout even with zero app logic involved (see /api/db-health-post).
+// @hono/node-server's Vercel body handling takes a fast path when Vercel
+// attaches `rawBody` (a Buffer) to the raw incoming request, and falls
+// back to a pull-based Readable.toWeb(incoming).getReader() stream
+// otherwise - which is where the hang is. This inspects the raw Node
+// request Vercel actually hands us, bypassing Hono entirely, to see
+// which path we're on.
+export default function handler(req: any, res: any) {
+  if (req.method === "POST" && req.url === "/api/_debug-req") {
+    let bodyEventFired = false;
+    req.on("data", () => {
+      bodyEventFired = true;
+    });
+    setTimeout(() => {
+      res.setHeader("content-type", "application/json");
+      res.end(
+        JSON.stringify({
+          hasRawBody: "rawBody" in req,
+          rawBodyType: typeof req.rawBody,
+          rawBodyIsBuffer: req.rawBody instanceof Buffer,
+          rawBodyLength: req.rawBody?.length,
+          hasBody: "body" in req,
+          bodyType: typeof req.body,
+          readable: req.readable,
+          readableEnded: req.readableEnded,
+          complete: req.complete,
+          dataEventFiredWithin200ms: bodyEventFired,
+          contentLength: req.headers["content-length"],
+          transferEncoding: req.headers["transfer-encoding"],
+        }),
+      );
+    }, 200);
+    return;
+  }
+  return honoListener(req, res);
+}
