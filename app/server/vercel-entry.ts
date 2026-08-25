@@ -108,6 +108,38 @@ app.get("/api/db-health-rqb", async (c) => {
   }
 });
 
+// Temporary diagnostic: isolates the insert (the other half of register,
+// after the findFirst check that's already confirmed fast) to see whether
+// $returningId() specifically is what hangs.
+app.get("/api/db-health-insert", async (c) => {
+  const start = Date.now();
+  try {
+    const db = getDb();
+    const probeEmail = `diagnostic-probe+${Date.now()}@example.com`;
+    const [result] = await db
+      .insert(users)
+      .values({
+        email: probeEmail,
+        name: "Diagnostic Probe",
+        passwordHash: "not-a-real-hash",
+        authType: "local",
+        lastSignInAt: new Date(),
+      })
+      .$returningId();
+    return c.json({ ok: true, ms: Date.now() - start, insertedId: result?.id });
+  } catch (err) {
+    return c.json(
+      {
+        ok: false,
+        ms: Date.now() - start,
+        message: err instanceof Error ? err.message : String(err),
+        code: (err as { code?: string })?.code,
+      },
+      500,
+    );
+  }
+});
+
 // Export for Vercel serverless.
 //
 // Two things matter here:
