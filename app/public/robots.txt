@@ -1,0 +1,93 @@
+# LenzerHub: every public page is open to search engines and AI crawlers.
+# Only private app routes and the API are excluded. Named crawlers follow
+# only their own group, so each one repeats the same rules.
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: Claude-User
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /analysis/
+Disallow: /auth-callback
+Disallow: /spa.html
+
+Sitemap: https://www.lenzerhub.com/sitemap.xml

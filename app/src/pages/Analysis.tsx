@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SeverityBadge } from "@/components/Severity";
 import { severityTone } from "@/lib/severity";
 import { ClauseDiff } from "@/components/Diff";
@@ -141,7 +142,7 @@ export default function Analysis() {
       <SiteHeader />
 
       <main id="main" className="shell pb-24 pt-[calc(var(--header-h)+3rem)]">
-        <nav aria-label="Breadcrumb" className="font-mono text-xs">
+        <nav aria-label="Breadcrumb" className="text-sm">
           <Link
             to="/dashboard"
             className="text-graphite underline underline-offset-4 transition-colors hover:text-ink"
@@ -163,7 +164,7 @@ export default function Analysis() {
             <h1 className="display mt-3 max-w-[18ch] text-display-md text-ink">
               {contract.title}
             </h1>
-            <p className="mt-3 font-mono text-xs text-graphite-light">
+            <p className="mt-3 text-sm text-graphite">
               Analysed{" "}
               {new Date(contract.updatedAt).toLocaleDateString(undefined, {
                 day: "numeric",
@@ -180,7 +181,7 @@ export default function Analysis() {
               <span className="text-[1.25rem] text-paper/35">/100</span>
             </p>
             <p
-              className="mt-2 font-mono text-xs uppercase tracking-[0.14em]"
+              className="mt-2 text-sm"
               style={{ color: bandTone.text }}
             >
               {band.label}
@@ -206,7 +207,7 @@ export default function Analysis() {
             const tone = severityTone(severity);
             return (
               <div key={severity} className="flex items-baseline gap-2.5">
-                <dt className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-graphite">
+                <dt className="text-sm text-graphite">
                   {SEVERITY_LABEL[severity]}
                 </dt>
                 <dd
@@ -238,7 +239,7 @@ export default function Analysis() {
                 <li key={finding.id} className="scroll-mt-24">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="font-mono text-xs text-graphite-light">
+                      <p className="text-sm text-graphite">
                         {String(index + 1).padStart(2, "0")}
                         {finding.category ? ` · ${finding.category}` : ""}
                       </p>
@@ -278,7 +279,7 @@ export default function Analysis() {
                             }),
                           );
                       }}
-                      className="mt-4 font-mono text-xs uppercase tracking-[0.14em] text-insert-deep underline underline-offset-4 transition-colors hover:text-ink"
+                      className="link mt-4 text-sm"
                     >
                       Copy replacement language
                     </button>
@@ -306,6 +307,7 @@ export default function Analysis() {
           </button>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

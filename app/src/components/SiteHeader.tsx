@@ -1,41 +1,42 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link, NavLink } from "react-router";
 import { Logo } from "@/components/Logo";
-import { primaryNav, site } from "@/lib/site";
+import { NAV_PAGES } from "@/lib/pages";
+import { formatPhone, site } from "@/lib/site";
 import { useAuth } from "@/hooks/useAuth";
 
 /**
- * Fixed header. Transparent over the hero, solid once scrolled.
- * The mobile drawer locks body scroll, closes on backdrop click, on Escape,
- * and on route change, and returns focus to the trigger.
+ * One navigation, identical on every page. The current page is marked with
+ * aria-current="page" (NavLink sets it). Below the width where the links stop
+ * fitting (xl, 1280px) they move behind a Menu button.
  */
 export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
-  const [scrolled, setScrolled] = useState(
-    () => typeof window !== "undefined" && window.scrollY > 24,
-  );
+  // Always false on first render so the server-rendered HTML and the first
+  // client render match; the real value is read after mount.
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
-  const location = useLocation();
-  const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
 
-  const transparent = overHero && !scrolled && !menuOpen;
+  const onDark = overHero && !scrolled && !menuOpen;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
+    const frame = requestAnimationFrame(onScroll);
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
-  // Scroll lock + Escape while the drawer is open.
+  // Scroll lock, Escape to close, focus into the panel while it is open.
   useEffect(() => {
     if (!menuOpen) return;
 
-    const { overflow, paddingRight } = document.body.style;
-    const gutter = window.innerWidth - document.documentElement.clientWidth;
+    const { overflow } = document.body.style;
     document.body.style.overflow = "hidden";
-    if (gutter > 0) document.body.style.paddingRight = `${gutter}px`;
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -44,102 +45,81 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
       }
     };
     document.addEventListener("keydown", onKeyDown);
-
     panelRef.current?.querySelector<HTMLElement>("a, button")?.focus();
 
     return () => {
       document.body.style.overflow = overflow;
-      document.body.style.paddingRight = paddingRight;
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [menuOpen]);
 
-  const goToAnchor = (to: string) => {
-    const [path, hash] = to.split("#");
-    if (location.pathname === (path || "/") && hash) {
-      document
-        .getElementById(hash)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      navigate(to);
-    }
-  };
+  const close = () => setMenuOpen(false);
 
-  const linkTone = transparent
-    ? "text-paper/70 hover:text-paper"
-    : "text-graphite hover:text-ink";
+  const desktopLink = ({ isActive }: { isActive: boolean }) =>
+    [
+      "relative py-2 text-[0.9375rem] transition-colors duration-150",
+      onDark
+        ? isActive
+          ? "text-white"
+          : "text-white/75 hover:text-white"
+        : isActive
+          ? "font-medium text-ink"
+          : "text-graphite hover:text-ink",
+      isActive
+        ? `after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:rounded-full ${onDark ? "after:bg-white" : "after:bg-ink"}`
+        : "",
+    ].join(" ");
 
   return (
     <>
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-paper"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-white"
       >
         Skip to content
       </a>
 
       <header
-        className={`fixed inset-x-0 top-0 z-50 h-[var(--header-h)] transition-colors duration-300 ease-precise ${
-          transparent
+        className={`fixed inset-x-0 top-0 z-50 h-[var(--header-h)] transition-colors duration-200 ${
+          onDark
             ? "bg-transparent"
-            : "border-b border-paper-line bg-paper/92 backdrop-blur-[2px]"
+            : "border-b border-paper-line bg-paper-raised"
         }`}
       >
         <div className="shell flex h-full items-center justify-between gap-6">
-          <Logo tone={transparent ? "paper" : "ink"} size={26} />
+          <Logo tone={onDark ? "paper" : "ink"} size={26} />
 
-          <nav
-            aria-label="Primary"
-            className="hidden items-center gap-7 lg:flex"
-          >
-            {primaryNav.map((item) =>
-              item.kind === "anchor" ? (
-                <button
-                  key={item.to}
-                  type="button"
-                  onClick={() => goToAnchor(item.to)}
-                  className={`text-sm font-medium transition-colors duration-200 ${linkTone}`}
-                >
-                  {item.label}
-                </button>
-              ) : (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={`text-sm font-medium transition-colors duration-200 ${linkTone}`}
-                >
-                  {item.label}
-                </Link>
-              ),
-            )}
+          <nav aria-label="Main" className="hidden items-center gap-6 xl:flex">
+            {NAV_PAGES.map((page) => (
+              <NavLink key={page.path} to={page.path} end className={desktopLink}>
+                {page.label}
+              </NavLink>
+            ))}
           </nav>
 
-          <div className="hidden items-center gap-3 lg:flex">
+          <div className="hidden items-center gap-4 xl:flex">
             {isAuthenticated ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className={`text-sm font-medium transition-colors duration-200 ${linkTone}`}
-                >
+                <NavLink to="/dashboard" className={desktopLink}>
                   Workspace
-                </Link>
+                </NavLink>
                 <button
                   type="button"
                   onClick={() => void logout()}
-                  className={`btn ${transparent ? "btn-onink" : "btn-outline"} px-4 py-2`}
+                  className={`btn ${onDark ? "btn-onink" : "btn-outline"} px-4 py-2`}
                 >
                   Sign out
                 </button>
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className={`text-sm font-medium transition-colors duration-200 ${linkTone}`}
-                >
+                <NavLink to="/login" className={desktopLink}>
                   Sign in
-                </Link>
-                <Link to="/login?intent=register" className="btn btn-primary px-4 py-2">
+                </NavLink>
+                <Link
+                  to="/login?intent=register"
+                  className="btn btn-primary px-4 py-2"
+                >
                   Review a contract
                 </Link>
               </>
@@ -151,92 +131,98 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
-            aria-controls="mobile-nav"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className={`-mr-2 inline-flex h-11 w-11 items-center justify-center rounded-md transition-colors lg:hidden ${
-              transparent ? "text-paper" : "text-ink"
+            aria-controls="site-menu"
+            className={`-mr-2 inline-flex h-11 items-center gap-2 rounded-md px-3 text-[0.9375rem] font-medium xl:hidden ${
+              onDark ? "text-white" : "text-ink"
             }`}
           >
-            <span className="relative block h-3.5 w-5">
+            <span aria-hidden="true" className="relative block h-3 w-4">
               <span
-                className={`absolute left-0 block h-[2px] w-5 bg-current transition-transform duration-300 ease-precise ${
-                  menuOpen ? "top-[6px] rotate-45" : "top-0"
+                className={`absolute left-0 block h-[1.5px] w-4 bg-current transition-transform duration-200 ${
+                  menuOpen ? "top-[5px] rotate-45" : "top-0"
                 }`}
               />
               <span
-                className={`absolute left-0 top-[6px] block h-[2px] w-5 bg-current transition-opacity duration-200 ${
-                  menuOpen ? "opacity-0" : "opacity-100"
-                }`}
-              />
-              <span
-                className={`absolute left-0 block h-[2px] w-5 bg-current transition-transform duration-300 ease-precise ${
-                  menuOpen ? "top-[6px] -rotate-45" : "top-[12px]"
+                className={`absolute left-0 block h-[1.5px] w-4 bg-current transition-transform duration-200 ${
+                  menuOpen ? "top-[5px] -rotate-45" : "top-[10px]"
                 }`}
               />
             </span>
+            {menuOpen ? "Close" : "Menu"}
           </button>
         </div>
       </header>
 
-      {/* Mobile drawer */}
+      {/* Menu panel for narrow screens */}
       <div
-        className={`fixed inset-0 z-40 lg:hidden ${menuOpen ? "" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-40 xl:hidden ${menuOpen ? "" : "pointer-events-none"}`}
         aria-hidden={!menuOpen}
       >
         <button
           type="button"
           tabIndex={-1}
           aria-label="Close menu"
-          onClick={() => setMenuOpen(false)}
-          className={`absolute inset-0 h-full w-full cursor-default bg-ink-deep transition-opacity duration-300 ${
-            menuOpen ? "opacity-70" : "opacity-0"
+          onClick={close}
+          className={`absolute inset-0 h-full w-full cursor-default bg-ink-deep transition-opacity duration-200 ${
+            menuOpen ? "opacity-50" : "opacity-0"
           }`}
         />
         <div
           ref={panelRef}
-          id="mobile-nav"
+          id="site-menu"
           role="dialog"
           aria-modal={menuOpen}
           aria-label="Site menu"
-          className={`absolute inset-x-0 top-0 flex max-h-[100dvh] flex-col overflow-y-auto bg-paper pb-8 pt-[var(--header-h)] transition-transform duration-300 ease-precise ${
+          className={`absolute inset-x-0 top-0 flex max-h-[100dvh] flex-col overflow-y-auto border-b border-paper-line bg-paper-raised pb-8 pt-[var(--header-h)] transition-transform duration-200 ${
             menuOpen ? "translate-y-0" : "-translate-y-full"
           }`}
         >
-          <nav aria-label="Mobile" className="shell flex flex-col pt-6">
-            {primaryNav.map((item, index) => (
-              <button
-                key={item.to}
-                type="button"
-                onClick={() => {
-                  setMenuOpen(false);
-                  // Let the drawer close before scrolling.
-                  window.setTimeout(() => goToAnchor(item.to), 260);
-                }}
-                className="flex items-baseline justify-between border-b border-paper-line py-4 text-left"
+          <nav aria-label="Menu" className="shell flex flex-col pt-2">
+            <NavLink
+              to="/"
+              end
+              onClick={close}
+              className={({ isActive }) =>
+                `border-b border-paper-line py-3.5 text-lg ${isActive ? "font-semibold text-ink" : "text-ink"}`
+              }
+            >
+              Home
+            </NavLink>
+            {NAV_PAGES.map((page) => (
+              <NavLink
+                key={page.path}
+                to={page.path}
+                end
+                onClick={close}
+                className={({ isActive }) =>
+                  `flex items-baseline justify-between gap-4 border-b border-paper-line py-3.5 text-lg ${
+                    isActive ? "font-semibold text-ink" : "text-ink"
+                  }`
+                }
               >
-                <span className="display text-[1.75rem] text-ink">
-                  {item.label}
-                </span>
-                <span className="eyebrow text-graphite-light">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </button>
+                {({ isActive }) => (
+                  <>
+                    <span>{page.label}</span>
+                    {isActive ? (
+                      <span className="text-sm font-normal text-graphite">
+                        Current page
+                      </span>
+                    ) : null}
+                  </>
+                )}
+              </NavLink>
             ))}
 
-            <div className="mt-7 flex flex-col gap-3">
+            <div className="mt-6 flex flex-col gap-3">
               {isAuthenticated ? (
                 <>
-                  <Link
-                    to="/dashboard"
-                    onClick={() => setMenuOpen(false)}
-                    className="btn btn-ink w-full"
-                  >
+                  <Link to="/dashboard" onClick={close} className="btn btn-ink w-full">
                     Open workspace
                   </Link>
                   <button
                     type="button"
                     onClick={() => {
-                      setMenuOpen(false);
+                      close();
                       void logout();
                     }}
                     className="btn btn-outline w-full"
@@ -248,29 +234,27 @@ export function SiteHeader({ overHero = false }: { overHero?: boolean }) {
                 <>
                   <Link
                     to="/login?intent=register"
-                    onClick={() => setMenuOpen(false)}
+                    onClick={close}
                     className="btn btn-primary w-full"
                   >
                     Review a contract
                   </Link>
-                  <Link
-                    to="/login"
-                    onClick={() => setMenuOpen(false)}
-                    className="btn btn-outline w-full"
-                  >
+                  <Link to="/login" onClick={close} className="btn btn-outline w-full">
                     Sign in
                   </Link>
                 </>
               )}
             </div>
 
-            <a
-              href={`mailto:${site.email}`}
-              onClick={() => setMenuOpen(false)}
-              className="mt-7 font-mono text-xs tracking-wide text-graphite underline underline-offset-4 hover:text-ink"
-            >
-              {site.email}
-            </a>
+            <p className="mt-6 text-sm text-graphite">
+              <a href={`mailto:${site.email}`} className="link">
+                {site.email}
+              </a>
+              <span aria-hidden="true"> · </span>
+              <a href={`tel:${site.phone}`} className="link">
+                {formatPhone(site.phone)}
+              </a>
+            </p>
           </nav>
         </div>
       </div>

@@ -1,119 +1,149 @@
-import { Link, useLocation, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { LogoMark } from "@/components/Logo";
-import { footerNav, formatPhone, site } from "@/lib/site";
+import { COMPANY_PAGES, PRODUCT_PAGES } from "@/lib/pages";
+import { formatPhone, mailto, site, workWithUs } from "@/lib/site";
 
+/**
+ * Shared detailed footer, identical on every page.
+ * Contact details come only from lib/site.ts.
+ */
 export function SiteFooter() {
   const year = new Date().getFullYear();
-  const location = useLocation();
-  const navigate = useNavigate();
 
-  const goToAnchor = (to: string) => {
-    const [path, hash] = to.split("#");
-    if (location.pathname === (path || "/") && hash) {
-      document
-        .getElementById(hash)
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      navigate(to);
-    }
-  };
+  const heading = "text-sm font-semibold text-ink";
+  const item = "text-sm text-graphite transition-colors hover:text-ink";
 
   return (
-    <footer className="bg-ink text-paper">
-      <div className="shell py-16 md:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
-          <div className="max-w-sm">
+    <footer className="border-t border-paper-line bg-paper-raised">
+      <div className="shell py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1.3fr]">
+          {/* Brand */}
+          <div className="max-w-xs sm:col-span-2 lg:col-span-1">
             <Link
               to="/"
               aria-label="LenzerHub home"
               className="inline-flex items-center gap-2.5 rounded-sm"
             >
-              <LogoMark size={26} tone="paper" />
-              <span className="display text-[1.15rem] leading-none text-paper">
-                Lenzer<span className="font-medium opacity-70">Hub</span>
+              <LogoMark size={26} />
+              <span className="text-[1.0625rem] font-semibold leading-none text-ink">
+                LenzerHub
               </span>
             </Link>
-            <p className="mt-4 font-read text-[0.9375rem] leading-relaxed text-paper/55">
-              {site.tagline} Contract review for companies that sign more
-              agreements than they have lawyers to read them.
+            <p className="mt-4 text-sm leading-relaxed text-graphite">
+              {site.summary}
             </p>
-
-            <div className="mt-6 flex flex-col gap-2 text-sm">
-              <a
-                href={`mailto:${site.email}`}
-                className="w-fit text-paper/70 underline underline-offset-4 transition-colors hover:text-paper"
-              >
-                {site.email}
-              </a>
-              {site.phone ? (
-                <a
-                  href={`tel:${site.phone}`}
-                  className="w-fit text-paper/70 underline underline-offset-4 transition-colors hover:text-paper"
-                >
-                  {formatPhone(site.phone)}
-                </a>
-              ) : null}
-            </div>
+            <Link
+              to="/login?intent=register"
+              className="btn btn-primary mt-5 px-4 py-2.5"
+            >
+              Review a contract free
+            </Link>
           </div>
 
-          {footerNav.map((group) => (
-            <nav key={group.heading} aria-label={group.heading}>
-              <h2 className="eyebrow text-paper/40">{group.heading}</h2>
-              <ul className="mt-4 space-y-2.5">
-                {group.items.map((item) => (
-                  <li key={item.label}>
-                    {item.kind === "anchor" ? (
-                      <button
-                        type="button"
-                        onClick={() => goToAnchor(item.to)}
-                        className="text-left text-sm text-paper/60 transition-colors hover:text-paper"
-                      >
-                        {item.label}
-                      </button>
-                    ) : (
-                      <Link
-                        to={item.to}
-                        className="text-sm text-paper/60 transition-colors hover:text-paper"
-                      >
-                        {item.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+          {/* Product */}
+          <nav aria-label="Product">
+            <h2 className={heading}>Product</h2>
+            <ul className="mt-3 space-y-2">
+              {PRODUCT_PAGES.map((page) => (
+                <li key={page.path}>
+                  <Link to={page.path} className={item}>
+                    {page.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link to="/dashboard" className={item}>
+                  Your workspace
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          {/* Company */}
+          <nav aria-label="Company">
+            <h2 className={heading}>Company</h2>
+            <ul className="mt-3 space-y-2">
+              {COMPANY_PAGES.map((page) => (
+                <li key={page.path}>
+                  <Link to={page.path} className={item}>
+                    {page.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Work with us */}
+          <nav aria-label="Work with us">
+            <h2 className={heading}>Work with us</h2>
+            <ul className="mt-3 space-y-2">
+              {workWithUs.map((topic) => (
+                <li key={topic.label}>
+                  <a href={mailto(topic.subject)} className={item}>
+                    {topic.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Contact */}
+          <div>
+            <h2 className={heading}>Contact</h2>
+            <address className="mt-3 space-y-2 not-italic">
+              <p>
+                <a href={`mailto:${site.email}`} className={item}>
+                  {site.email}
+                </a>
+              </p>
+              <p>
+                <a href={`tel:${site.phone}`} className={item}>
+                  {formatPhone(site.phone)}
+                </a>
+              </p>
+              <p className="text-sm text-graphite">
+                {`${site.location.city}, ${site.location.country}`}
+              </p>
+              <p className="text-sm text-graphite">
+                {site.team.map((member) => member.name).join(" and ")}
+              </p>
+              {site.social.map((profile) => (
+                <p key={profile.href}>
+                  <a
+                    href={profile.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={item}
+                  >
+                    {profile.label}
+                  </a>
+                </p>
+              ))}
+            </address>
+          </div>
         </div>
 
-        <hr className="rule-ink my-10" />
-
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <p className="font-mono text-xs text-paper/35">
-            © {year} {site.name}. All rights reserved.
+        <div className="mt-12 flex flex-col gap-4 border-t border-paper-line pt-6 text-sm text-graphite md:flex-row md:items-center md:justify-between">
+          <p>
+            © {year} {site.name}. {site.disclaimer}
           </p>
-          <a
-            href={site.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 font-mono text-xs text-paper/45 transition-colors hover:text-paper"
-          >
-            LinkedIn
-            <svg
-              width="11"
-              height="11"
-              viewBox="0 0 12 12"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M3 9L9 3M9 3H4M9 3v5"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </a>
+          <ul className="flex flex-wrap gap-x-5 gap-y-2">
+            <li>
+              <Link to="/privacy" className={item}>
+                Privacy
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms" className={item}>
+                Terms
+              </Link>
+            </li>
+            <li>
+              <Link to="/contact" className={item}>
+                Contact
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

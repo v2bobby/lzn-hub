@@ -1,20 +1,12 @@
 import { Link } from "react-router";
 import { LegalPage } from "@/components/LegalPage";
-import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { site } from "@/lib/site";
 
 export default function Privacy() {
-  useDocumentMeta(
-    "Privacy policy — LenzerHub",
-    "What LenzerHub collects, why, how long it is kept, and the rights you have over it.",
-  );
-
   return (
     <LegalPage
-      eyebrow="Legal"
-      title="Privacy policy"
+      path="/privacy"
       updated="18 August 2026"
-      intro="This policy explains what we collect, why we collect it, and what you can ask us to do with it. Contracts are sensitive documents, so the short version is: we process them to produce your analysis and for nothing else."
       sections={[
         {
           heading: "What we collect",
@@ -90,7 +82,7 @@ export default function Privacy() {
               processing. Write to{" "}
               <a
                 href={`mailto:${site.email}`}
-                className="underline underline-offset-4 hover:text-ink"
+                className="link"
               >
                 {site.email}
               </a>{" "}
@@ -106,7 +98,7 @@ export default function Privacy() {
               advertising or cross-site tracking cookies. See the{" "}
               <Link
                 to="/terms"
-                className="underline underline-offset-4 hover:text-ink"
+                className="link"
               >
                 terms of service
               </Link>{" "}

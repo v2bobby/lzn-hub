@@ -16,15 +16,18 @@ module.exports = {
           3: "#22303E",
           line: "rgba(255,255,255,0.10)",
         },
+        // Neutral, slightly cool off-white for the page; pure white for
+        // panels sitting on it. Deliberately no warm cream or beige.
         paper: {
-          DEFAULT: "#F1F2EE",
-          raised: "#FAFAF7",
-          sunk: "#E6E8E2",
-          line: "rgba(14,22,32,0.12)",
+          DEFAULT: "#F5F6F7",
+          raised: "#FFFFFF",
+          sunk: "#ECEEF1",
+          line: "rgba(14,22,32,0.10)",
         },
+        // Both greys pass WCAG AA for body text on the off-white page.
         graphite: {
-          DEFAULT: "#56626E",
-          light: "#8A97A6",
+          DEFAULT: "#4F5B67",
+          light: "#6B7684",
         },
         insert: {
           DEFAULT: "#2E8B65",
@@ -87,19 +90,25 @@ module.exports = {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      // Fonts are self-hosted through @fontsource (imported in main.tsx), so
+      // no request leaves for a third-party font CDN.
       fontFamily: {
-        display: ['"Archivo"', "system-ui", "sans-serif"],
-        sans: ['"Archivo"', "system-ui", "sans-serif"],
-        read: ['"Newsreader"', "Georgia", "serif"],
+        display: ['"Archivo Variable"', "Archivo", "system-ui", "sans-serif"],
+        sans: ['"Archivo Variable"', "Archivo", "system-ui", "sans-serif"],
+        // Reading text uses the UI sans. Kept as its own token so it can be
+        // changed in one place.
+        read: ['"Archivo Variable"', "Archivo", "system-ui", "sans-serif"],
+        // Serif is reserved for contract language itself, so quoted clause
+        // text reads as a document rather than as interface copy.
+        contract: ['"Newsreader Variable"', "Newsreader", "Georgia", "serif"],
         mono: ['"IBM Plex Mono"', "ui-monospace", "monospace"],
       },
+      // Calm, moderate heading sizes. Sentence case, weight 600, normal width.
       fontSize: {
-        // Fluid display sizes. Typography is the load-bearing element here.
-        "display-xl": ["clamp(3rem, 12vw, 9.5rem)", { lineHeight: "0.86", letterSpacing: "-0.035em" }],
-        "display-lg": ["clamp(2.5rem, 7.5vw, 5.5rem)", { lineHeight: "0.92", letterSpacing: "-0.03em" }],
-        "display-md": ["clamp(2rem, 4.6vw, 3.25rem)", { lineHeight: "0.98", letterSpacing: "-0.025em" }],
-        "display-sm": ["clamp(1.5rem, 2.8vw, 2.125rem)", { lineHeight: "1.06", letterSpacing: "-0.02em" }],
-        eyebrow: ["0.6875rem", { lineHeight: "1", letterSpacing: "0.18em" }],
+        "display-xl": ["clamp(2.25rem, 4.6vw, 3.5rem)", { lineHeight: "1.08", letterSpacing: "-0.02em" }],
+        "display-lg": ["clamp(1.875rem, 3.6vw, 2.75rem)", { lineHeight: "1.12", letterSpacing: "-0.015em" }],
+        "display-md": ["clamp(1.625rem, 2.8vw, 2.125rem)", { lineHeight: "1.18", letterSpacing: "-0.01em" }],
+        "display-sm": ["clamp(1.25rem, 1.9vw, 1.5rem)", { lineHeight: "1.25", letterSpacing: "-0.005em" }],
       },
       borderRadius: {
         // Balanced radii, 4-10px. No pill-shaped everything.
@@ -132,10 +141,6 @@ module.exports = {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
-        "rise-in": {
-          from: { opacity: "0", transform: "translateY(14px)" },
-          to: { opacity: "1", transform: "none" },
-        },
         "sweep": {
           from: { transform: "translateX(-100%)" },
           to: { transform: "translateX(220%)" },
@@ -145,7 +150,6 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
-        "rise-in": "rise-in 0.5s cubic-bezier(0.22,0.61,0.36,1) both",
         sweep: "sweep 1.6s cubic-bezier(0.4,0,0.2,1) infinite",
       },
     },

@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { severityTone } from "@/lib/severity";
 import { useAuth } from "@/hooks/useAuth";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
@@ -146,7 +147,7 @@ export default function Dashboard() {
 
       <main id="main" className="shell pb-24 pt-[calc(var(--header-h)+3rem)]">
         <header>
-          <p className="eyebrow text-insert-deep">Workspace</p>
+          <p className="eyebrow">Workspace</p>
           <h1 className="display mt-3 text-display-md text-ink">
             {user?.name ? `Welcome back, ${user.name.split(" ")[0]}.` : "Welcome back."}
           </h1>
@@ -418,7 +419,7 @@ export default function Dashboard() {
                         <p className="truncate text-sm font-semibold text-ink">
                           {contract.title}
                         </p>
-                        <p className="mt-1 truncate font-mono text-[0.6875rem] uppercase tracking-[0.1em] text-graphite-light">
+                        <p className="mt-1 truncate text-sm text-graphite-light">
                           {contract.vendor ? `${contract.vendor} · ` : ""}
                           {
                             CONTRACT_TYPE_LABEL[
@@ -441,15 +442,15 @@ export default function Dashboard() {
                           {score}/100
                         </span>
                       ) : contract.status === "analyzing" ? (
-                        <span className="font-mono text-xs uppercase tracking-[0.12em] text-graphite">
+                        <span className="text-sm text-graphite">
                           Analysing
                         </span>
                       ) : contract.status === "failed" ? (
-                        <span className="font-mono text-xs uppercase tracking-[0.12em] text-strike">
+                        <span className="text-sm text-strike">
                           Failed
                         </span>
                       ) : (
-                        <span className="font-mono text-xs uppercase tracking-[0.12em] text-graphite-light">
+                        <span className="text-sm text-graphite">
                           Not analysed
                         </span>
                       )}
@@ -517,6 +518,7 @@ export default function Dashboard() {
           </section>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

@@ -11,7 +11,7 @@ export function LogoMark({
   size?: number;
   tone?: "ink" | "paper";
 }) {
-  const plate = tone === "ink" ? "#0E1620" : "#F1F2EE";
+  const plate = tone === "ink" ? "#0E1620" : "#FFFFFF";
   const rule = tone === "ink" ? "#8A97A6" : "#56626E";
   return (
     <svg
@@ -55,13 +55,10 @@ export function Logo({
     >
       <LogoMark size={size} tone={tone === "ink" ? "ink" : "paper"} />
       <span
-        className="display text-[1.15rem] leading-none"
-        style={{
-          color: tone === "ink" ? "#0E1620" : "#F1F2EE",
-          fontVariationSettings: '"wdth" 112',
-        }}
+        className="text-[1.0625rem] font-semibold leading-none tracking-[-0.01em]"
+        style={{ color: tone === "ink" ? "#0E1620" : "#FFFFFF" }}
       >
-        Lenzer<span className="font-medium opacity-70">Hub</span>
+        LenzerHub
       </span>
     </Link>
   );

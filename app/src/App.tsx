@@ -3,7 +3,12 @@ import { Route, Routes, useLocation } from "react-router";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Analysis from "./pages/Analysis";
+import Clauses from "./pages/Clauses";
+import Scoring from "./pages/Scoring";
+import Coverage from "./pages/Coverage";
+import Pricing from "./pages/Pricing";
 import About from "./pages/About";
+import Team from "./pages/Team";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
@@ -12,8 +17,8 @@ import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 /**
- * Restores scroll on route change, but honours in-page anchors so the
- * header nav can deep-link into homepage sections.
+ * Restores scroll to the top on route change, and honours in-page anchors
+ * (the legal pages' contents lists).
  */
 function ScrollManager() {
   const { pathname, hash } = useLocation();
@@ -22,7 +27,7 @@ function ScrollManager() {
     if (hash) {
       const target = document.getElementById(hash.slice(1));
       if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        target.scrollIntoView({ block: "start" });
         return;
       }
     }
@@ -40,7 +45,12 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/analysis/:id" element={<Analysis />} />
+        <Route path="/clauses" element={<Clauses />} />
+        <Route path="/scoring" element={<Scoring />} />
+        <Route path="/coverage" element={<Coverage />} />
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="/about" element={<About />} />
+        <Route path="/team" element={<Team />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/auth-callback" element={<AuthCallback />} />

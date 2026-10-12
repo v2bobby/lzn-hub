@@ -11,9 +11,9 @@ export function SeverityBadge({
   const tone = severityTone(severity);
   return (
     <span
-      className="eyebrow inline-flex shrink-0 items-center gap-1.5 rounded-sm border px-2 py-1"
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-md border px-2 py-0.5 text-[0.8125rem] font-medium"
       style={{
-        color: onInk ? "#F1F2EE" : tone.text,
+        color: onInk ? "#FFFFFF" : tone.text,
         backgroundColor: onInk ? "rgba(255,255,255,0.06)" : tone.wash,
         borderColor: tone.border,
       }}

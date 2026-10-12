@@ -1,2 +1,6 @@
 .vercel
 .env*
+
+# Windows download metadata and stray patch files
+*:Zone.Identifier
+*.patch

@@ -2,11 +2,11 @@ import { Link } from "react-router";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useDocumentMeta } from "@/hooks/useDocumentMeta";
-import { primaryNav } from "@/lib/site";
+import { DIRECTORY_PAGES } from "@/lib/pages";
 
 export default function NotFound() {
   useDocumentMeta(
-    "Page not found — LenzerHub",
+    "Page not found | LenzerHub",
     "That page does not exist. Here is where everything else lives.",
   );
 
@@ -16,41 +16,30 @@ export default function NotFound() {
 
       <main
         id="main"
-        className="shell flex flex-1 flex-col justify-center py-24 pt-[calc(var(--header-h)+5rem)]"
+        className="shell flex flex-1 flex-col justify-center py-16 pt-[calc(var(--header-h)+4rem)]"
       >
-        <p className="eyebrow text-graphite-light">Error 404</p>
-        <h1 className="display mt-5 max-w-[16ch] text-display-lg text-ink">
-          No clause here.
-        </h1>
-        <p className="mt-6 max-w-read font-read text-[1.0625rem] leading-relaxed text-graphite">
+        <p className="eyebrow">Error 404</p>
+        <h1 className="display mt-2 text-display-lg text-ink">No clause here</h1>
+        <p className="lede mt-4 max-w-xl">
           This page does not exist, or it moved. The useful parts of the site
           are one click away.
         </p>
 
-        <div className="mt-10 max-w-xl divide-y divide-paper-line border-y border-paper-line">
-          {primaryNav.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className="flex items-center justify-between py-4 transition-colors duration-200 hover:text-insert-deep"
-            >
-              <span className="display text-[1.5rem] text-ink transition-colors hover:text-insert-deep">
-                {item.label}
-              </span>
-              <svg width="14" height="14" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                <path
-                  d="M3 9L9 3M9 3H4M9 3v5"
-                  stroke="currentColor"
-                  strokeWidth="1.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Link>
+        <ul className="mt-8 max-w-xl divide-y divide-paper-line overflow-hidden rounded-lg border border-paper-line bg-paper-raised">
+          {DIRECTORY_PAGES.map((page) => (
+            <li key={page.path}>
+              <Link
+                to={page.path}
+                className="flex items-center justify-between gap-4 px-5 py-3.5 transition-colors hover:bg-paper"
+              >
+                <span className="text-[1.0625rem] font-medium text-ink">{page.label}</span>
+                <span aria-hidden="true" className="text-graphite">→</span>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
 
-        <div className="mt-10 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/" className="btn btn-ink">
             Back to the homepage
           </Link>

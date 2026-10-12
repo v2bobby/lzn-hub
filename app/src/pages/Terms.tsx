@@ -1,20 +1,12 @@
 import { Link } from "react-router";
 import { LegalPage } from "@/components/LegalPage";
-import { useDocumentMeta } from "@/hooks/useDocumentMeta";
 import { site } from "@/lib/site";
 
 export default function Terms() {
-  useDocumentMeta(
-    "Terms of service — LenzerHub",
-    "The terms that govern your use of LenzerHub, including account, payment and liability terms.",
-  );
-
   return (
     <LegalPage
-      eyebrow="Legal"
-      title="Terms of service"
+      path="/terms"
       updated="18 August 2026"
-      intro="These terms govern your use of LenzerHub. They are written to be read, not to be survived. If something here is unclear, write to us and we will explain it in plain terms."
       sections={[
         {
           heading: "What LenzerHub does",
@@ -43,7 +35,7 @@ export default function Terms() {
               activity under your account. Tell us promptly at{" "}
               <a
                 href={`mailto:${site.email}`}
-                className="underline underline-offset-4 hover:text-ink"
+                className="link"
               >
                 {site.email}
               </a>{" "}
@@ -103,14 +95,14 @@ export default function Terms() {
                 Questions go to{" "}
                 <a
                   href={`mailto:${site.email}`}
-                  className="underline underline-offset-4 hover:text-ink"
+                  className="link"
                 >
                   {site.email}
                 </a>
                 . See also our{" "}
                 <Link
                   to="/privacy"
-                  className="underline underline-offset-4 hover:text-ink"
+                  className="link"
                 >
                   privacy policy
                 </Link>
