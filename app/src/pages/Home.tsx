@@ -54,10 +54,7 @@ export default function Home() {
           />
 
           <div className="shell relative z-10 pb-12 pt-[calc(var(--header-h)+4rem)] md:pb-16">
-            <p className="text-[0.9375rem] text-white/70">
-              Contract review for small and mid-sized companies
-            </p>
-            <h1 className="display mt-3 max-w-3xl text-display-xl text-white">
+            <h1 className="display max-w-3xl text-display-xl text-white">
               {page.heading}
             </h1>
             <p className="mt-5 max-w-xl text-[1.0625rem] leading-relaxed text-white/75 md:text-lg">

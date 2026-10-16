@@ -21,6 +21,32 @@ export type TeamMember = {
 
 const EMAIL = "davidemeh@lenzerhub.com";
 
+/**
+ * Legal entity, as stated on the Certificate of Incorporation issued by the
+ * Corporate Affairs Commission (CAC), Nigeria. Correct anything here and it
+ * changes on every page, in the structured data, llms.txt and the data files.
+ *
+ * Deliberately not published: the tax identification number, the certificate
+ * scan, and the "nature of business" line.
+ */
+const COMPANY = {
+  legalName: "LenzerHub Technology Ltd",
+  registrationNumber: "873421",
+  registry: "Corporate Affairs Commission (CAC), Nigeria",
+  registryShort: "CAC",
+  act: "Companies and Allied Matters Act 2020",
+  /** ISO date of registration. */
+  registeredOn: "2026-04-21",
+  address: {
+    // Spelling follows the certificate exactly.
+    street: "12 Abuja Emrald, Odim",
+    locality: "Nsukka",
+    region: "Enugu",
+    country: "Nigeria",
+    countryCode: "NG",
+  },
+} as const;
+
 export const site = {
   name: "LenzerHub",
   tagline: "Know what you're signing before you sign it.",
@@ -31,6 +57,7 @@ export const site = {
     "Contract review for small and mid-sized companies that sign agreements without in-house counsel.",
   disclaimer:
     "LenzerHub is not a law firm and does not provide legal advice.",
+  company: COMPANY,
   email: EMAIL,
   /** E.164, rendered as a tel: link everywhere it appears. */
   phone: "+2348107365207",
@@ -71,6 +98,27 @@ export function formatPhone(e164: string): string {
     return `+1 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7)}`;
   }
   return e164;
+}
+
+/** "12 Abuja Emrald, Odim, Nsukka, Enugu, Nigeria" */
+export function registeredAddress(): string {
+  const a = COMPANY.address;
+  return `${a.street}, ${a.locality}, ${a.region}, ${a.country}`;
+}
+
+/** "21 April 2026" */
+export function registrationDate(): string {
+  const [year, month, day] = COMPANY.registeredOn.split("-").map(Number);
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+  return `${day} ${months[month - 1]} ${year}`;
+}
+
+/** "LenzerHub Technology Ltd, registered in Nigeria with the CAC (no. 873421)" */
+export function companyLine(): string {
+  return `${COMPANY.legalName}, registered in Nigeria with the ${COMPANY.registryShort} (no. ${COMPANY.registrationNumber})`;
 }
 
 export function mailto(subject: string): string {

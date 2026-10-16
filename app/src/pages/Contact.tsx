@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
 import { PageShell, PageSection } from "@/components/PageShell";
-import { formatPhone, mailto, site, workWithUs } from "@/lib/site";
+import { formatPhone, mailto, registeredAddress, site, workWithUs } from "@/lib/site";
 
 const TOPICS = [
   "A contract question",
@@ -72,9 +72,13 @@ export default function Contact() {
                 </dd>
               </div>
               <div className="p-5">
-                <dt className="eyebrow">Location</dt>
+                <dt className="eyebrow">Registered office</dt>
                 <dd className="mt-1 text-[0.9375rem] text-ink">
-                  {`${site.location.city}, ${site.location.country}`}
+                  {site.company.legalName}
+                  <span className="block">{registeredAddress()}</span>
+                  <span className="block text-sm text-graphite">
+                    {`${site.company.registryShort} registration no. ${site.company.registrationNumber}`}
+                  </span>
                 </dd>
               </div>
               <div className="p-5">

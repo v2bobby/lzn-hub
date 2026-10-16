@@ -181,7 +181,7 @@ export function RiskEstimator() {
           </div>
 
           <div className="border-t border-paper-line p-6">
-            <p className="eyebrow mb-2">The arithmetic</p>
+            <h3 className="mb-2 text-[0.9375rem] font-semibold text-ink">The arithmetic</h3>
             <p className="font-mono text-sm text-graphite">
               critical 4 · high 3 · medium 2 · low 1
             </p>

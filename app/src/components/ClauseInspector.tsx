@@ -156,12 +156,9 @@ export function ClauseInspector() {
             className="panel p-6 md:p-7"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <p className="eyebrow">{clause.category}</p>
-                <h2 className="display mt-1 text-display-sm text-ink">
-                  {clause.clauseName}
-                </h2>
-              </div>
+              <h2 className="display text-display-sm text-ink">
+                {clause.clauseName}
+              </h2>
               <SeverityBadge severity={clause.severity} />
             </div>
 

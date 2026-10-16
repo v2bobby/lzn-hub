@@ -1,30 +1,53 @@
 import { Link } from "react-router";
 import { LegalPage } from "@/components/LegalPage";
-import { site } from "@/lib/site";
+import { registeredAddress, site } from "@/lib/site";
 
 export default function Privacy() {
   return (
     <LegalPage
       path="/privacy"
-      updated="18 August 2026"
+      updated="16 October 2026"
       sections={[
+        {
+          heading: "Who we are",
+          body: (
+            <p>
+              {site.company.legalName} operates LenzerHub and is responsible for
+              the personal data described in this policy. It is registered in
+              Nigeria with the {site.company.registry} under registration number{" "}
+              {site.company.registrationNumber}, with its registered office at{" "}
+              {registeredAddress()}. Contact us about your data at{" "}
+              <a href={`mailto:${site.email}`} className="link">
+                {site.email}
+              </a>
+              .
+            </p>
+          ),
+        },
         {
           heading: "What we collect",
           body: (
             <>
               <p>
-                <strong className="font-semibold text-ink">Account data:</strong>{" "}
+                <strong className="font-semibold text-ink">
+                  Account data:
+                </strong>{" "}
                 your name, email address, and either a hashed password or an
-                identifier from Google or Kimi if you sign in that way. Passwords
-                are hashed with bcrypt and never stored in readable form.
+                identifier from Google or Kimi if you sign in that way.
+                Passwords are hashed with bcrypt and never stored in readable
+                form.
               </p>
               <p>
-                <strong className="font-semibold text-ink">Contract data:</strong>{" "}
+                <strong className="font-semibold text-ink">
+                  Contract data:
+                </strong>{" "}
                 the agreements and metadata you add, plus the findings generated
                 from them.
               </p>
               <p>
-                <strong className="font-semibold text-ink">Technical data:</strong>{" "}
+                <strong className="font-semibold text-ink">
+                  Technical data:
+                </strong>{" "}
                 standard server logs needed to run and secure the service.
               </p>
             </>
@@ -34,9 +57,9 @@ export default function Privacy() {
           heading: "Why we process it",
           body: (
             <p>
-              To authenticate you, produce and store your analyses, send
-              renewal alerts you have asked for, and keep the service running
-              and secure. We do not sell personal data and we do not run
+              To authenticate you, produce and store your analyses, send renewal
+              alerts you have asked for, and keep the service running and
+              secure. We do not sell personal data and we do not run
               advertising.
             </p>
           ),
@@ -80,10 +103,7 @@ export default function Privacy() {
               Depending on where you live, you may have the right to access,
               correct, export or erase your data, and to object to certain
               processing. Write to{" "}
-              <a
-                href={`mailto:${site.email}`}
-                className="link"
-              >
+              <a href={`mailto:${site.email}`} className="link">
                 {site.email}
               </a>{" "}
               and we will respond within 30 days.
@@ -96,10 +116,7 @@ export default function Privacy() {
             <p>
               We set a session cookie so you stay signed in. There are no
               advertising or cross-site tracking cookies. See the{" "}
-              <Link
-                to="/terms"
-                className="link"
-              >
+              <Link to="/terms" className="link">
                 terms of service
               </Link>{" "}
               for the rest of the arrangement.

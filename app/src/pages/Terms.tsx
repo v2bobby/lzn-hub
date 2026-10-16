@@ -1,13 +1,26 @@
 import { Link } from "react-router";
 import { LegalPage } from "@/components/LegalPage";
-import { site } from "@/lib/site";
+import { registeredAddress, site } from "@/lib/site";
 
 export default function Terms() {
   return (
     <LegalPage
       path="/terms"
-      updated="18 August 2026"
+      updated="16 October 2026"
       sections={[
+        {
+          heading: "Who we are",
+          body: (
+            <p>
+              LenzerHub is a service of {site.company.legalName}, a company
+              registered in Nigeria with the {site.company.registry} under
+              registration number {site.company.registrationNumber}, with its
+              registered office at {registeredAddress()}. In these terms,
+              &ldquo;we&rdquo; and &ldquo;us&rdquo; mean{" "}
+              {site.company.legalName}.
+            </p>
+          ),
+        },
         {
           heading: "What LenzerHub does",
           body: (
@@ -22,7 +35,8 @@ export default function Terms() {
                   LenzerHub is not a law firm and does not provide legal advice.
                 </strong>{" "}
                 Using the service does not create an attorney-client
-                relationship. You remain responsible for the agreements you sign.
+                relationship. You remain responsible for the agreements you
+                sign.
               </p>
             </>
           ),
@@ -33,10 +47,7 @@ export default function Terms() {
             <p>
               You are responsible for keeping your credentials secure and for
               activity under your account. Tell us promptly at{" "}
-              <a
-                href={`mailto:${site.email}`}
-                className="link"
-              >
+              <a href={`mailto:${site.email}`} className="link">
                 {site.email}
               </a>{" "}
               if you believe an account has been accessed without permission.
@@ -79,7 +90,8 @@ export default function Terms() {
             <p>
               To the extent permitted by law, our aggregate liability is limited
               to the fees you paid in the twelve months before the claim. We are
-              not liable for outcomes of negotiations or for agreements you sign.
+              not liable for outcomes of negotiations or for agreements you
+              sign.
             </p>
           ),
         },
@@ -93,17 +105,11 @@ export default function Terms() {
               </p>
               <p>
                 Questions go to{" "}
-                <a
-                  href={`mailto:${site.email}`}
-                  className="link"
-                >
+                <a href={`mailto:${site.email}`} className="link">
                   {site.email}
                 </a>
                 . See also our{" "}
-                <Link
-                  to="/privacy"
-                  className="link"
-                >
+                <Link to="/privacy" className="link">
                   privacy policy
                 </Link>
                 .

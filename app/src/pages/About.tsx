@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { PageShell, PageSection } from "@/components/PageShell";
+import { CompanyDetails } from "@/components/CompanyDetails";
 import { CLAUSE_LIBRARY, SEVERITY_WEIGHTS } from "@contracts/clause-library";
 import { site } from "@/lib/site";
 
@@ -62,6 +63,13 @@ export default function About() {
             </div>
           ))}
         </dl>
+      </PageSection>
+
+      <PageSection
+        title="Company details"
+        intro={`LenzerHub is a service of ${site.company.legalName}, a company registered in Nigeria.`}
+      >
+        <CompanyDetails />
       </PageSection>
 
       <PageSection title="Who is behind it">

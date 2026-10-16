@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { LogoMark } from "@/components/Logo";
 import { COMPANY_PAGES, PRODUCT_PAGES } from "@/lib/pages";
-import { formatPhone, mailto, site, workWithUs } from "@/lib/site";
+import { companyLine, formatPhone, mailto, registeredAddress, site, workWithUs } from "@/lib/site";
 
 /**
  * Shared detailed footer, identical on every page.
@@ -101,9 +101,7 @@ export function SiteFooter() {
                   {formatPhone(site.phone)}
                 </a>
               </p>
-              <p className="text-sm text-graphite">
-                {`${site.location.city}, ${site.location.country}`}
-              </p>
+              <p className="text-sm text-graphite">{registeredAddress()}</p>
               <p className="text-sm text-graphite">
                 {site.team.map((member) => member.name).join(" and ")}
               </p>
@@ -124,9 +122,10 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-paper-line pt-6 text-sm text-graphite md:flex-row md:items-center md:justify-between">
-          <p>
-            © {year} {site.name}. {site.disclaimer}
-          </p>
+          <div className="space-y-1">
+            <p>{`© ${year} ${companyLine()}.`}</p>
+            <p>{site.disclaimer}</p>
+          </div>
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
             <li>
               <Link to="/privacy" className={item}>

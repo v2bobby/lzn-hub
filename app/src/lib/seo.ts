@@ -16,7 +16,14 @@ import {
 import { COVERAGE } from "./coverage";
 import { PAGES, getPage, type PageDef } from "./pages";
 import { COUNSEL_HOURLY, COUNSEL_HOURS_PER_CONTRACT, PLANS } from "./plans";
-import { SITE_URL, formatPhone, site } from "./site";
+import {
+  SITE_URL,
+  companyLine,
+  formatPhone,
+  registeredAddress,
+  registrationDate,
+  site,
+} from "./site";
 
 export const SHARE_IMAGE = {
   url: `${SITE_URL}/og-image.png`,
@@ -101,6 +108,13 @@ function organizationNode() {
     "@type": "Organization",
     "@id": ORG_ID,
     name: site.name,
+    legalName: site.company.legalName,
+    foundingDate: site.company.registeredOn,
+    identifier: {
+      "@type": "PropertyValue",
+      propertyID: "CAC registration number (Nigeria)",
+      value: site.company.registrationNumber,
+    },
     url: `${SITE_URL}/`,
     logo: {
       "@type": "ImageObject",
@@ -114,8 +128,10 @@ function organizationNode() {
     telephone: site.phone,
     address: {
       "@type": "PostalAddress",
-      addressLocality: site.location.city,
-      addressCountry: site.location.countryCode,
+      streetAddress: site.company.address.street,
+      addressLocality: site.company.address.locality,
+      addressRegion: site.company.address.region,
+      addressCountry: site.company.address.countryCode,
     },
     founder: site.team.map((member) => ({ "@id": personId(member.name) })),
     contactPoint: {
@@ -376,7 +392,13 @@ function riskBands() {
 }
 
 export function buildDataFiles(generated: string): Record<string, unknown> {
-  const publisher = { name: site.name, url: `${SITE_URL}/`, email: site.email };
+  const publisher = {
+    name: site.name,
+    legalName: site.company.legalName,
+    registrationNumber: site.company.registrationNumber,
+    url: `${SITE_URL}/`,
+    email: site.email,
+  };
 
   return {
     [DATA_FILES.clauses.path]: {
@@ -466,7 +488,8 @@ Key facts:
 - Risk score: fixed severity weights (critical ${SEVERITY_WEIGHTS.critical}, high ${SEVERITY_WEIGHTS.high}, medium ${SEVERITY_WEIGHTS.medium}, low ${SEVERITY_WEIGHTS.low}); the score is the sum of the weights found divided by the worst case for that many clauses.
 - Pricing: first review free, then $39 per contract; Team plan $89 a month billed annually for up to 48 contracts a year; Volume pricing quoted.
 - Team: ${site.team.map((m) => `${m.name} (${m.role})`).join(", ")}.
-- Based in ${site.location.city}, ${site.location.country}. Contact: ${site.email}, ${formatPhone(site.phone)}.
+- Company: ${companyLine()}, registered on ${registrationDate()} under the ${site.company.act}. Registered office: ${registeredAddress()}.
+- Contact: ${site.email}, ${formatPhone(site.phone)}.
 
 Caveats:
 - ${site.disclaimer} No attorney-client relationship is created by using it.

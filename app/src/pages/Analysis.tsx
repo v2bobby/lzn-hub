@@ -29,12 +29,12 @@ export default function Analysis() {
 
   const query = trpc.contract.get.useQuery(
     { id: numericId },
-    { enabled: valid && !authLoading, retry: false },
+    { enabled: valid && !authLoading, retry: false }
   );
 
   useDocumentMeta(
     query.data ? `${query.data.title} — LenzerHub` : "Analysis — LenzerHub",
-    "Clause-by-clause findings with replacement language for your agreement.",
+    "Clause-by-clause findings with replacement language for your agreement."
   );
 
   if (authLoading || query.isLoading) {
@@ -66,8 +66,7 @@ export default function Analysis() {
           id="main"
           className="shell flex min-h-[70vh] flex-col justify-center py-24"
         >
-          <p className="eyebrow text-strike">Report unavailable</p>
-          <h1 className="display mt-4 text-display-md text-ink">
+          <h1 className="display text-display-md text-ink">
             This report isn't in your workspace.
           </h1>
           <p className="mt-5 max-w-read font-read text-[1.0625rem] leading-relaxed text-graphite">
@@ -90,9 +89,9 @@ export default function Analysis() {
   const band = riskBand(score);
   const bandTone = severityTone(band.tone);
 
-  const counts = SEVERITY_ORDER.map((severity) => ({
+  const counts = SEVERITY_ORDER.map(severity => ({
     severity,
-    count: findings.filter((f) => f.severity === severity).length,
+    count: findings.filter(f => f.severity === severity).length,
   }));
 
   const exportReport = () => {
@@ -116,7 +115,7 @@ export default function Analysis() {
         finding.explanation ? `Why: ${finding.explanation}` : "",
         finding.originalText ? `As written: ${finding.originalText}` : "",
         finding.suggestedText ? `Send instead: ${finding.suggestedText}` : "",
-        "",
+        ""
       );
     });
 
@@ -155,17 +154,17 @@ export default function Analysis() {
 
         <header className="mt-6 grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <p className="eyebrow text-graphite-light">
-              {CONTRACT_TYPE_LABEL[
-                (contract.contractType ?? "other") as ContractType
-              ]}
-              {contract.vendor ? ` · ${contract.vendor}` : ""}
-            </p>
-            <h1 className="display mt-3 max-w-[18ch] text-display-md text-ink">
+            <h1 className="display max-w-[18ch] text-display-md text-ink">
               {contract.title}
             </h1>
             <p className="mt-3 text-sm text-graphite">
-              Analysed{" "}
+              {
+                CONTRACT_TYPE_LABEL[
+                  (contract.contractType ?? "other") as ContractType
+                ]
+              }
+              {contract.vendor ? ` with ${contract.vendor}` : ""}
+              {" · "}Analysed{" "}
               {new Date(contract.updatedAt).toLocaleDateString(undefined, {
                 day: "numeric",
                 month: "long",
@@ -180,10 +179,7 @@ export default function Analysis() {
               {score}
               <span className="text-[1.25rem] text-paper/35">/100</span>
             </p>
-            <p
-              className="mt-2 text-sm"
-              style={{ color: bandTone.text }}
-            >
+            <p className="mt-2 text-sm" style={{ color: bandTone.text }}>
               {band.label}
             </p>
             <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
@@ -270,13 +266,13 @@ export default function Analysis() {
                         void navigator.clipboard
                           .writeText(finding.suggestedText ?? "")
                           .then(() =>
-                            toast.success("Replacement language copied"),
+                            toast.success("Replacement language copied")
                           )
                           .catch(() =>
                             toast.error("Could not copy", {
                               description:
                                 "Your browser blocked clipboard access. Select the text and copy it manually.",
-                            }),
+                            })
                           );
                       }}
                       className="link mt-4 text-sm"

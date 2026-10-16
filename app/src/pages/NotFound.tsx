@@ -18,8 +18,7 @@ export default function NotFound() {
         id="main"
         className="shell flex flex-1 flex-col justify-center py-16 pt-[calc(var(--header-h)+4rem)]"
       >
-        <p className="eyebrow">Error 404</p>
-        <h1 className="display mt-2 text-display-lg text-ink">No clause here</h1>
+        <h1 className="display text-display-lg text-ink">Page not found</h1>
         <p className="lede mt-4 max-w-xl">
           This page does not exist, or it moved. The useful parts of the site
           are one click away.

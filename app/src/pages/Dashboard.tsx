@@ -147,8 +147,7 @@ export default function Dashboard() {
 
       <main id="main" className="shell pb-24 pt-[calc(var(--header-h)+3rem)]">
         <header>
-          <p className="eyebrow">Workspace</p>
-          <h1 className="display mt-3 text-display-md text-ink">
+          <h1 className="display text-display-md text-ink">
             {user?.name ? `Welcome back, ${user.name.split(" ")[0]}.` : "Welcome back."}
           </h1>
           <p className="mt-4 max-w-read font-read text-[1.0625rem] leading-relaxed text-graphite">

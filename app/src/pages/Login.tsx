@@ -88,8 +88,7 @@ export default function Login() {
             }}
           />
           <div className="relative z-10 flex h-full flex-col justify-end p-12">
-            <p className="text-[0.9375rem] text-white/70">Contract review</p>
-            <p className="display mt-3 max-w-[16ch] text-display-md text-white">
+            <p className="display max-w-[16ch] text-display-md text-white">
               Eight clauses decide the deal.
             </p>
             <p className="mt-5 max-w-sm font-read text-[1.0625rem] leading-relaxed text-white/70">
